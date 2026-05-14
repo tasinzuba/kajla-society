@@ -3,6 +3,7 @@
   "version": 2,
   "regions": ["sin1"],
   "installCommand": "npm install",
+  "buildCommand": "npx prisma generate",
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/index" },
     { "source": "/(.*)", "destination": "/api/index" }
