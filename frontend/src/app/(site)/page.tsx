@@ -29,76 +29,158 @@ export default function HomePage() {
   return (
     <>
       {/* ===========================================================
-         HERO
+         HERO — Split-screen magazine
       =========================================================== */}
-      <section className="relative min-h-[80vh] flex items-center overflow-hidden">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={stockImages.heroHome}
-          alt="Kajla community"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-dark/95 via-primary/85 to-primary/60" />
-        <div className="absolute inset-0 bg-pattern-dots opacity-20" />
+      <section className="relative overflow-hidden bg-white">
+        {/* Decorative blurred shapes */}
+        <div className="absolute top-0 left-0 w-[500px] h-[500px] rounded-full bg-accent/40 blur-3xl -translate-x-1/3 -translate-y-1/3 pointer-events-none" />
+        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full bg-secondary/10 blur-3xl translate-x-1/4 translate-y-1/4 pointer-events-none" />
 
-        <div className="relative max-w-7xl mx-auto px-4 py-20 lg:py-28 grid lg:grid-cols-2 gap-12 items-center">
-          <div className="text-white animate-fade-up">
-            <span className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur border border-white/20 rounded-full text-xs uppercase tracking-widest text-accent mb-5">
-              <HiOutlineSparkles />
+        <div className="relative max-w-7xl mx-auto px-4 py-16 lg:py-24 grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+          {/* Left: Text */}
+          <div className="lg:col-span-6 animate-fade-up">
+            <span className="inline-flex items-center gap-2 px-3 py-1 bg-accent text-primary border border-primary/10 rounded-full text-[10px] uppercase tracking-widest font-bold mb-6">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
               Welcome to Kajla Society
             </span>
-            <h1 className="text-4xl lg:text-6xl xl:text-7xl font-extrabold leading-[1.1] mb-4 tracking-tight">
-              Building a vibrant <br />
-              <span className="text-accent">connected community</span>
+
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold leading-[1.05] text-primary mb-5 tracking-tight">
+              Building a <br />
+              <span className="relative inline-block">
+                <span className="relative z-10">vibrant</span>
+                <span className="absolute bottom-1 left-0 right-0 h-3 bg-accent/70 -z-0" />
+              </span>{" "}
+              connected <br className="hidden sm:block" />
+              community.
             </h1>
-            <p className="text-lg lg:text-xl text-accent font-bn mb-6 leading-relaxed" lang="bn">
+
+            <p
+              className="text-lg lg:text-xl text-secondary font-bn mb-6 leading-relaxed"
+              lang="bn"
+            >
               একটি প্রাণবন্ত, সংযুক্ত সমাজ
             </p>
-            <p className="text-base lg:text-lg text-white/85 leading-relaxed mb-8 max-w-xl">
+
+            <p className="text-base lg:text-lg text-foreground/75 leading-relaxed mb-8 max-w-xl">
               Where neighbors become friends and every member feels at home.
-              Join us in creating lasting memories together.
+              Join us in creating lasting memories together — in the heart of
+              Kajla.
             </p>
-            <div className="flex flex-wrap gap-3">
+
+            <div className="flex flex-wrap gap-3 mb-10">
               <Link
                 href="/services/membership"
-                className="inline-flex items-center gap-2 px-6 py-3.5 bg-white text-primary font-semibold rounded-xl hover:bg-accent transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5"
+                className="inline-flex items-center gap-2 px-6 py-3.5 bg-gradient-to-r from-primary to-primary-light text-white font-semibold rounded-xl hover:shadow-xl hover:-translate-y-0.5 transition-all shadow-lg shadow-primary/20"
               >
                 Become a Member
                 <HiArrowRight />
               </Link>
               <Link
                 href="/about"
-                className="inline-flex items-center px-6 py-3.5 border-2 border-white/30 backdrop-blur hover:border-white hover:bg-white/10 text-white font-semibold rounded-xl transition"
+                className="inline-flex items-center px-6 py-3.5 border-2 border-primary/15 hover:border-primary text-primary font-semibold rounded-xl transition bg-white"
               >
                 Learn More
               </Link>
             </div>
+
+            {/* Trust signal */}
+            <div className="flex items-center gap-4 flex-wrap">
+              <div className="flex -space-x-3">
+                {[
+                  "bg-gradient-to-br from-blue-400 to-blue-600",
+                  "bg-gradient-to-br from-indigo-400 to-indigo-600",
+                  "bg-gradient-to-br from-sky-400 to-sky-600",
+                  "bg-gradient-to-br from-cyan-400 to-cyan-600",
+                ].map((cls, i) => (
+                  <div
+                    key={i}
+                    className={`w-10 h-10 rounded-full ${cls} border-2 border-white shadow-md grid place-items-center text-white text-xs font-bold`}
+                  >
+                    {String.fromCharCode(65 + i)}
+                  </div>
+                ))}
+              </div>
+              <div className="text-sm">
+                <div className="font-bold text-primary">1,200+ active members</div>
+                <div className="text-muted text-xs">
+                  Trusted by the community since 1980
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-2 gap-4">
-            {[
-              { Icon: HiOutlineUsers, num: "1,200+", label: "Residents" },
-              { Icon: HiOutlineCalendarDays, num: "45", label: "Years strong" },
-              { Icon: HiOutlineSparkles, num: "30+", label: "Events / year" },
-              { Icon: HiOutlineUserGroup, num: "12", label: "Committees" },
-            ].map((s) => (
-              <div
-                key={s.label}
-                className="glass rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-all hover:-translate-y-1"
-              >
-                <s.Icon className="text-3xl text-accent mb-3" />
-                <div className="text-3xl lg:text-4xl font-extrabold text-white">
-                  {s.num}
+          {/* Right: Image with floating cards */}
+          <div className="lg:col-span-6 relative">
+            <div className="absolute -top-6 -left-6 w-32 h-32 bg-pattern-dots opacity-50 rounded-2xl pointer-events-none" />
+            <div className="absolute -bottom-6 -right-6 w-40 h-40 bg-pattern-dots opacity-50 rounded-2xl pointer-events-none" />
+
+            <div className="relative rounded-3xl overflow-hidden shadow-2xl ring-1 ring-black/5 aspect-[4/5] sm:aspect-square lg:aspect-[4/5]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={stockImages.heroHome}
+                alt="Kajla Society community"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-primary-dark/40 via-transparent to-transparent" />
+
+              {/* Top floating card — Established */}
+              <div className="absolute top-6 right-6 bg-white/95 backdrop-blur rounded-2xl shadow-xl p-4 max-w-[200px]">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-dark grid place-items-center text-white text-lg">
+                    <HiOutlineCalendarDays />
+                  </div>
+                  <div>
+                    <div className="text-[10px] uppercase tracking-wider text-muted font-bold">
+                      Established
+                    </div>
+                    <div className="text-lg font-extrabold text-primary leading-none">
+                      45 years
+                    </div>
+                  </div>
                 </div>
-                <div className="text-sm text-white/80 mt-1">{s.label}</div>
               </div>
-            ))}
+
+              {/* Bottom floating card — Stats */}
+              <div className="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur rounded-2xl shadow-xl p-5">
+                <div className="grid grid-cols-3 gap-4 text-center divide-x divide-border">
+                  <div>
+                    <div className="text-2xl lg:text-3xl font-extrabold text-primary">
+                      1.2k+
+                    </div>
+                    <div className="text-[10px] uppercase tracking-wider text-muted font-semibold mt-0.5">
+                      Members
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-2xl lg:text-3xl font-extrabold text-primary">
+                      30+
+                    </div>
+                    <div className="text-[10px] uppercase tracking-wider text-muted font-semibold mt-0.5">
+                      Events
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-2xl lg:text-3xl font-extrabold text-primary">
+                      12
+                    </div>
+                    <div className="text-[10px] uppercase tracking-wider text-muted font-semibold mt-0.5">
+                      Committees
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Floating award badge — top left corner */}
+              <div className="absolute -top-3 -left-3 w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full shadow-xl place-items-center text-white text-center font-extrabold text-[10px] leading-tight -rotate-12 hidden sm:grid">
+                <div>
+                  <div className="text-base">★</div>
+                  <div>SINCE</div>
+                  <div>1980</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-
-        {/* Bottom curve */}
-        <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-background to-transparent pointer-events-none" />
       </section>
 
       {/* ===========================================================
