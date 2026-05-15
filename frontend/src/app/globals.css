@@ -4,7 +4,7 @@
    Kajla Society — Professional Blue + White
    ============================================================ */
 :root {
-  /* Brand — Blues */
+  /* Brand — Blues (primary) */
   --color-primary: #1e40af;        /* blue-800 */
   --color-primary-dark: #1e3a8a;   /* blue-900 */
   --color-primary-light: #3b82f6;  /* blue-500 */
@@ -12,6 +12,13 @@
   --color-secondary-light: #60a5fa; /* blue-400 */
   --color-accent: #dbeafe;         /* blue-100 */
   --color-accent-dark: #bfdbfe;    /* blue-200 */
+
+  /* Brand — Emerald Green (accent) */
+  --color-emerald: #10b981;        /* emerald-500 */
+  --color-emerald-dark: #047857;   /* emerald-700 */
+  --color-emerald-light: #34d399;  /* emerald-400 */
+  --color-emerald-pale: #d1fae5;   /* emerald-100 */
+  --color-emerald-faint: #ecfdf5;  /* emerald-50 */
 
   /* Surfaces */
   --color-background: #f8fafc;     /* slate-50 */
@@ -44,6 +51,12 @@
   --color-accent: var(--color-accent);
   --color-accent-dark: var(--color-accent-dark);
   --color-cream: var(--color-cream);
+
+  --color-emerald: var(--color-emerald);
+  --color-emerald-dark: var(--color-emerald-dark);
+  --color-emerald-light: var(--color-emerald-light);
+  --color-emerald-pale: var(--color-emerald-pale);
+  --color-emerald-faint: var(--color-emerald-faint);
 
   --color-background: var(--color-background);
   --color-surface: var(--color-surface);
@@ -224,6 +237,58 @@ a {
 }
 .animate-fade-up {
   animation: fadeUp 0.5s ease-out;
+}
+
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+.animate-float {
+  animation: floatY 4s ease-in-out infinite;
+}
+.animate-float-delayed {
+  animation: floatY 5s ease-in-out 1s infinite;
+}
+
+@keyframes pulseRing {
+  0%   { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+  100% { box-shadow: 0 0 0 18px rgba(16, 185, 129, 0); }
+}
+.animate-pulse-ring {
+  animation: pulseRing 2s infinite;
+}
+
+@keyframes slowSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.animate-slow-spin {
+  animation: slowSpin 30s linear infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradientShift 8s ease infinite;
+}
+
+/* ============================================================
+   Gradient utilities (Blue + Emerald)
+   ============================================================ */
+.gradient-brand {
+  background: linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #10b981 100%);
+}
+.gradient-brand-soft {
+  background: linear-gradient(135deg, #dbeafe 0%, #d1fae5 100%);
+}
+.gradient-text-brand {
+  background: linear-gradient(135deg, #1e40af 0%, #10b981 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 /* Scrollbar polish */
