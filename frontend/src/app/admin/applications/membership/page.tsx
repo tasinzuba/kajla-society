@@ -107,8 +107,8 @@ export default function MembershipApplicationsPage() {
             <thead className="bg-background border-b border-border text-left text-xs uppercase tracking-wider text-muted">
               <tr>
                 <th className="px-5 py-3">Name</th>
-                <th className="px-5 py-3">Phone</th>
-                <th className="px-5 py-3">House</th>
+                <th className="px-5 py-3">Mobile</th>
+                <th className="px-5 py-3">Type</th>
                 <th className="px-5 py-3">Submitted</th>
                 <th className="px-5 py-3">Status</th>
                 <th className="px-5 py-3 text-right">Action</th>
@@ -121,11 +121,9 @@ export default function MembershipApplicationsPage() {
                     {a.fullName}
                     <div className="text-xs text-muted font-normal">{a.email}</div>
                   </td>
-                  <td className="px-5 py-3">{a.phone}</td>
-                  <td className="px-5 py-3 text-muted">
-                    {a.houseNo}
-                    {a.road && <span>, Rd {a.road}</span>}
-                    {a.block && <span>, {a.block}</span>}
+                  <td className="px-5 py-3 font-mono text-xs">{a.mobile}</td>
+                  <td className="px-5 py-3 text-muted text-xs">
+                    {a.membershipType}
                   </td>
                   <td className="px-5 py-3 text-muted text-xs">
                     {formatDate(a.createdAt)}
