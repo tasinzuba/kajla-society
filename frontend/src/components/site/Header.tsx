@@ -157,7 +157,7 @@ function EmeraldNavItem({
     >
       <Link
         href={item.href}
-        className={`relative inline-flex items-center gap-1.5 px-3 lg:px-4 py-4 text-[14px] font-black uppercase tracking-wide transition-colors whitespace-nowrap ${
+        className={`relative inline-flex items-center gap-1.5 px-3 lg:px-4 py-4 text-[14px] font-semibold uppercase tracking-wide transition-colors whitespace-nowrap ${
           active
             ? "bg-[#FEAC00] text-black"
             : "text-black hover:bg-amber-500/40"
