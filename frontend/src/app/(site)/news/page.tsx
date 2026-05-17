@@ -71,7 +71,7 @@ export default async function NewsListPage({
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   {a.category && (
-                    <span className="absolute top-3 left-3 px-2.5 py-1 text-[10px] uppercase tracking-wider bg-primary text-white rounded-full font-bold shadow">
+                    <span className="absolute top-3 left-3 px-2.5 py-1 text-[10px] uppercase tracking-wider bg-white/95 backdrop-blur text-amber-800 rounded font-bold shadow">
                       {a.category.name}
                     </span>
                   )}
@@ -137,8 +137,8 @@ function Pagination({
           href={`${base}${sep}page=${p}`}
           className={`min-w-[40px] h-10 grid place-items-center rounded-lg text-sm font-semibold transition ${
             p === current
-              ? "bg-primary text-white shadow-md"
-              : "bg-white border border-border hover:border-primary text-foreground"
+              ? "bg-amber-400 text-primary-dark shadow-md"
+              : "bg-white border border-border hover:border-amber-400 text-foreground"
           }`}
         >
           {p}

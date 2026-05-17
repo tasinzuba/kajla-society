@@ -3,6 +3,7 @@ import {
   HiOutlinePhone,
   HiOutlineEnvelope,
   HiOutlineGlobeAlt,
+  HiOutlineHeart,
 } from "react-icons/hi2";
 import {
   FaMosque,
@@ -67,7 +68,6 @@ export default async function FacilitiesPage() {
     <>
       <PageHero
         title="Community Facilities"
-        titleBn="সুবিধাসমূহ"
         subtitle="Local services, institutions, and emergency contacts in and around Kajla."
         image={stockImages.heroFacilities}
         crumbs={[{ label: "Facilities" }]}
@@ -129,9 +129,6 @@ export default async function FacilitiesPage() {
                     <h2 className="text-2xl lg:text-3xl font-extrabold text-primary tracking-tight">
                       {meta.label}
                     </h2>
-                    <p className="text-sm text-muted font-bn" lang="bn">
-                      {meta.labelBn}
-                    </p>
                   </div>
                   <div className="h-px flex-1 bg-border" />
                   <span className="text-sm text-muted whitespace-nowrap">
@@ -154,31 +151,43 @@ export default async function FacilitiesPage() {
 }
 
 function FacilityCard({ f }: { f: Facility }) {
+  const CategoryIcon = CATEGORY_ICON[f.category];
+  const cover = mediaUrl(f.image);
+  const showDonate = f.category === "RELIGIOUS" && f.donationPhone;
+
   return (
-    <div className="bg-white border border-border rounded-2xl overflow-hidden hover:shadow-xl hover:border-primary/30 transition-all hover:-translate-y-1">
-      {f.image && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={mediaUrl(f.image) ?? ""}
-          alt={f.name}
-          className="w-full h-36 object-cover"
-        />
-      )}
-      <div className="p-5">
+    <div className="bg-white border border-border rounded-2xl overflow-hidden hover:shadow-xl hover:border-primary/30 transition-all hover:-translate-y-1 flex flex-col">
+      {/* Image area — always shown (placeholder when no image) */}
+      <div className="relative aspect-[4/3] bg-gradient-to-br from-accent to-cream overflow-hidden">
+        {cover ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={cover}
+            alt={f.name}
+            className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+          />
+        ) : (
+          <div className="w-full h-full grid place-items-center text-primary/30">
+            <CategoryIcon className="text-7xl" />
+          </div>
+        )}
+        {/* Category badge */}
+        <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/95 backdrop-blur text-primary-dark rounded-md text-[10px] uppercase tracking-wider font-bold shadow">
+          <CategoryIcon />
+          {CATEGORY_META[f.category].label}
+        </span>
+      </div>
+
+      <div className="p-5 flex flex-col flex-1">
         <h3 className="font-bold text-lg text-primary tracking-tight">
           {f.name}
         </h3>
-        {f.nameBn && (
-          <p className="text-xs text-muted font-bn mt-0.5" lang="bn">
-            {f.nameBn}
-          </p>
-        )}
         {f.description && (
           <p className="text-sm text-muted mt-2 line-clamp-3 leading-relaxed">
             {f.description}
           </p>
         )}
-        <div className="mt-4 space-y-2 text-sm border-t border-border pt-3">
+        <div className="mt-4 space-y-2 text-sm border-t border-border pt-3 flex-1">
           {f.address && (
             <div className="flex items-start gap-2 text-foreground/80">
               <HiOutlineMapPin className="text-primary flex-shrink-0 mt-0.5" />
@@ -218,6 +227,17 @@ function FacilityCard({ f }: { f: Facility }) {
             </div>
           )}
         </div>
+
+        {/* Donate button — only for Religious facilities with donation phone */}
+        {showDonate && (
+          <a
+            href={`tel:${f.donationPhone}`}
+            className="mt-4 inline-flex items-center justify-center gap-2 px-4 py-3 bg-amber-400 hover:bg-amber-300 text-primary-dark font-bold rounded-md shadow-md transition-all hover:-translate-y-0.5 uppercase tracking-wider text-sm"
+          >
+            <HiOutlineHeart className="text-base" />
+            Donate · {f.donationPhone}
+          </a>
+        )}
       </div>
     </div>
   );

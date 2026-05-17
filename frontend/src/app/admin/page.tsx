@@ -2,19 +2,30 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useAuth } from "@/lib/useAuth";
+import type { IconType } from "react-icons";
+import {
+  HiOutlinePencilSquare,
+  HiOutlineClipboardDocumentList,
+  HiOutlineCalendarDays,
+  HiOutlineMegaphone,
+  HiOutlineDocumentText,
+  HiOutlinePhoto,
+  HiOutlineEnvelopeOpen,
+} from "react-icons/hi2";
 import { getDashboardStats, type DashboardStats } from "@/lib/stats";
 import { formatDate } from "@/lib/utils";
 
-const quickActions = [
-  { label: "Write Article", href: "/admin/articles/new", icon: "✎" },
-  { label: "Post Notice", href: "/admin/notices/new", icon: "📌" },
-  { label: "Create Event", href: "/admin/events/new", icon: "📅" },
-  { label: "Add Page", href: "/admin/pages/new", icon: "▤" },
-];
+type ActivityItem = {
+  id: string;
+  kind: "article" | "application" | "event";
+  title: string;
+  meta: string;
+  href: string;
+  date: string;
+  Icon: IconType;
+};
 
 export default function AdminDashboard() {
-  const { user } = useAuth();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -24,249 +35,303 @@ export default function AdminDashboard() {
       .catch((e) => setError(e instanceof Error ? e.message : "Failed"));
   }, []);
 
-  const cards = [
+  const metrics: {
+    label: string;
+    value: number | string;
+    href: string;
+    hint: string;
+  }[] = [
     {
       label: "Residents",
       value: stats?.counters.residents ?? "—",
       href: "/admin/residents",
-      color: "bg-secondary",
-      icon: "🏠",
+      hint: "Listed in directory",
     },
     {
-      label: "Articles",
-      value: stats ? `${stats.counters.articlesPublished} / ${stats.counters.articlesPublished + stats.counters.articlesDraft}` : "—",
-      sublabel: stats ? "published / total" : undefined,
+      label: "Published articles",
+      value: stats?.counters.articlesPublished ?? "—",
       href: "/admin/articles",
-      color: "bg-primary",
-      icon: "✎",
+      hint:
+        stats
+          ? `${stats.counters.articlesDraft} drafts in queue`
+          : "Loading…",
     },
     {
-      label: "Pending Applications",
-      value: stats?.counters.pendingApplications ?? "—",
+      label: "Pending applications",
+      value: stats?.counters.pendingByType.membership ?? "—",
       href: "/admin/applications/membership",
-      color: "bg-warning",
-      icon: "📋",
+      hint: "Awaiting review",
     },
     {
-      label: "Unread Messages",
+      label: "Unread messages",
       value: stats?.counters.unreadMessages ?? "—",
       href: "/admin/messages",
-      color: "bg-success",
-      icon: "✉",
+      hint: "Contact form inbox",
     },
+  ];
+
+  const activity: ActivityItem[] = [];
+  if (stats) {
+    stats.recent.membershipApplications.forEach((m) =>
+      activity.push({
+        id: "ma-" + m.id,
+        kind: "application",
+        title: m.fullName,
+        meta: `Membership application · ${m.status.toLowerCase()}`,
+        href: `/admin/applications/membership/${m.id}`,
+        date: m.createdAt,
+        Icon: HiOutlineClipboardDocumentList,
+      })
+    );
+    stats.recent.articles.forEach((a) =>
+      activity.push({
+        id: "ar-" + a.id,
+        kind: "article",
+        title: a.title,
+        meta: a.isPublished ? "Article · published" : "Article · draft",
+        href: `/admin/articles/${a.id}/edit`,
+        date: a.createdAt,
+        Icon: HiOutlinePencilSquare,
+      })
+    );
+    stats.recent.events.forEach((e) =>
+      activity.push({
+        id: "ev-" + e.id,
+        kind: "event",
+        title: e.title,
+        meta: `Event · ${formatDate(e.startsAt)}`,
+        href: `/admin/events/${e.id}/edit`,
+        date: e.createdAt,
+        Icon: HiOutlineCalendarDays,
+      })
+    );
+  }
+  activity.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+  const quickActions: { label: string; href: string; Icon: IconType }[] = [
+    { label: "New article", href: "/admin/articles/new", Icon: HiOutlinePencilSquare },
+    { label: "New notice", href: "/admin/notices/new", Icon: HiOutlineMegaphone },
+    { label: "New event", href: "/admin/events/new", Icon: HiOutlineCalendarDays },
+    { label: "New page", href: "/admin/pages/new", Icon: HiOutlineDocumentText },
+    { label: "Upload gallery", href: "/admin/gallery/new", Icon: HiOutlinePhoto },
   ];
 
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-primary">
-          Hello, {user?.name?.split(" ")[0] ?? "Admin"} 👋
-        </h1>
-        <p className="text-muted mt-1">
-          Here&apos;s what&apos;s happening with Kajla Society today.
-        </p>
+      {/* Page header */}
+      <div className="flex items-end justify-between gap-4 flex-wrap pb-6 border-b border-border">
+        <div>
+          <h1 className="text-[22px] font-bold text-primary-dark tracking-tight">
+            Overview
+          </h1>
+          <p className="text-[13px] text-muted mt-1">
+            A snapshot of activity across Kajla Society.
+          </p>
+        </div>
+        <div className="flex items-center gap-1.5 text-[12px] text-muted">
+          <span className="font-mono">
+            {new Date().toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            })}
+          </span>
+        </div>
       </div>
 
       {error && (
-        <div className="px-4 py-3 rounded bg-danger/10 border border-danger/30 text-danger text-sm">
+        <div className="px-3 py-2 rounded bg-red-50 border border-red-200 text-red-700 text-[12px]">
           {error}
         </div>
       )}
 
-      {/* Stats cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {cards.map((c) => (
+      {/* Metric tiles */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 border border-border rounded-md bg-white overflow-hidden">
+        {metrics.map((m, i) => (
           <Link
-            key={c.label}
-            href={c.href}
-            className="bg-surface border border-border rounded-lg p-5 hover:shadow-md transition group"
+            key={m.label}
+            href={m.href}
+            className={`group p-5 hover:bg-[#fafaf7] transition ${
+              i !== metrics.length - 1 ? "border-b lg:border-b-0 lg:border-r border-border" : ""
+            } ${i < 2 ? "border-b lg:border-b-0" : ""}`}
           >
-            <div
-              className={`w-10 h-10 rounded-lg ${c.color} mb-3 grid place-items-center text-white text-lg`}
-            >
-              {c.icon}
+            <div className="text-[10px] uppercase tracking-[0.12em] text-muted/80 font-semibold">
+              {m.label}
             </div>
-            <div className="text-3xl font-bold text-primary">{c.value}</div>
-            <div className="text-xs text-muted mt-1 group-hover:text-secondary transition">
-              {c.label} →
+            <div className="text-[28px] lg:text-[32px] font-bold text-primary-dark tracking-tight font-mono mt-2 leading-none">
+              {m.value}
             </div>
-            {c.sublabel && (
-              <div className="text-[10px] text-muted mt-0.5">{c.sublabel}</div>
-            )}
+            <div className="text-[11px] text-muted mt-2 group-hover:text-amber-700 transition">
+              {m.hint}
+            </div>
           </Link>
         ))}
       </div>
 
-      {/* Quick actions */}
-      <div className="bg-surface border border-border rounded-lg p-6">
-        <h2 className="font-semibold text-primary mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      {/* Quick actions — pill row */}
+      <div>
+        <div className="text-[10px] uppercase tracking-[0.12em] text-muted/80 font-semibold mb-2.5">
+          Quick actions
+        </div>
+        <div className="flex flex-wrap gap-2">
           {quickActions.map((a) => (
             <Link
               key={a.href}
               href={a.href}
-              className="flex items-center gap-3 px-4 py-3 rounded-lg border border-border hover:border-secondary hover:bg-cream transition group"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-border rounded text-[12px] font-semibold text-primary-dark hover:border-amber-400 hover:bg-amber-50/40 transition"
             >
-              <span className="text-2xl">{a.icon}</span>
-              <span className="text-sm font-semibold text-primary group-hover:text-secondary">
-                {a.label}
-              </span>
+              <a.Icon className="text-[14px] text-amber-700" />
+              {a.label}
             </Link>
           ))}
         </div>
       </div>
 
-      {/* Pending breakdown */}
-      {stats && stats.counters.pendingApplications > 0 && (
-        <div className="bg-surface border border-border rounded-lg p-6">
-          <h2 className="font-semibold text-primary mb-4">Pending Applications</h2>
-          <div className="grid sm:grid-cols-3 gap-3">
-            <PendingCard
-              label="Membership"
-              count={stats.counters.pendingByType.membership}
-              href="/admin/applications/membership"
-            />
-            <PendingCard
-              label="Car Sticker"
-              count={stats.counters.pendingByType.carSticker}
-              href="/admin/applications/car-sticker"
-            />
-            <PendingCard
-              label="Adoptions"
-              count={stats.counters.pendingByType.adoption}
-              href="/admin/applications/adoptions"
-            />
-          </div>
-        </div>
-      )}
+      {/* Two columns: Activity feed (wider) + Snapshot (narrower) */}
+      <div className="grid lg:grid-cols-[1fr_320px] gap-6">
+        {/* Activity feed */}
+        <section className="bg-white border border-border rounded-md">
+          <header className="px-5 py-3.5 border-b border-border flex items-center justify-between">
+            <div>
+              <h2 className="text-[13px] font-bold text-primary-dark">
+                Recent activity
+              </h2>
+              <p className="text-[11px] text-muted mt-0.5">
+                Latest changes across content and applications.
+              </p>
+            </div>
+          </header>
 
-      {/* Recent activity + system status */}
-      <div className="grid lg:grid-cols-2 gap-6">
-        <div className="bg-surface border border-border rounded-lg p-6">
-          <h3 className="font-semibold text-primary mb-3">Recent Articles</h3>
-          {stats && stats.recent.articles.length > 0 ? (
-            <ul className="space-y-2">
-              {stats.recent.articles.map((a) => (
-                <li key={a.id} className="flex items-center justify-between text-sm">
+          {activity.length === 0 ? (
+            <div className="px-5 py-12 text-center text-[13px] text-muted">
+              No activity yet.
+            </div>
+          ) : (
+            <ul className="divide-y divide-border">
+              {activity.slice(0, 10).map((item) => (
+                <li key={item.id}>
                   <Link
-                    href={`/admin/articles/${a.id}/edit`}
-                    className="text-primary hover:text-secondary truncate flex-1 mr-3"
+                    href={item.href}
+                    className="flex items-start gap-3 px-5 py-3 hover:bg-[#fafaf7] transition group"
                   >
-                    {a.title}
+                    <div className="w-7 h-7 rounded grid place-items-center bg-[#fafaf7] border border-border flex-shrink-0 group-hover:border-amber-400 transition">
+                      <item.Icon className="text-[14px] text-amber-700" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[13px] font-semibold text-primary-dark truncate">
+                        {item.title}
+                      </div>
+                      <div className="text-[11px] text-muted mt-0.5 truncate">
+                        {item.meta}
+                      </div>
+                    </div>
+                    <div className="text-[11px] text-muted font-mono whitespace-nowrap pt-0.5">
+                      {formatDate(item.date)}
+                    </div>
                   </Link>
-                  <span className="text-xs text-muted whitespace-nowrap">
-                    {a.isPublished ? (
-                      <span className="text-success">● Live</span>
-                    ) : (
-                      <span className="text-warning">○ Draft</span>
-                    )}
-                  </span>
                 </li>
               ))}
             </ul>
-          ) : (
-            <p className="text-sm text-muted">No articles yet.</p>
           )}
-          <Link
-            href="/admin/articles"
-            className="inline-block mt-4 text-xs text-secondary hover:underline"
-          >
-            View all →
-          </Link>
-        </div>
+        </section>
 
-        <div className="bg-surface border border-border rounded-lg p-6">
-          <h3 className="font-semibold text-primary mb-3">Recent Applicants</h3>
-          {stats && stats.recent.membershipApplications.length > 0 ? (
-            <ul className="space-y-2">
-              {stats.recent.membershipApplications.map((m) => (
-                <li key={m.id} className="flex items-center justify-between text-sm">
-                  <Link
-                    href={`/admin/applications/membership/${m.id}`}
-                    className="text-primary hover:text-secondary truncate flex-1 mr-3"
-                  >
-                    {m.fullName}
-                  </Link>
-                  <span className="text-xs text-muted whitespace-nowrap">
-                    {formatDate(m.createdAt)}
-                  </span>
-                </li>
-              ))}
+        {/* Right column: Snapshot + Inbox preview */}
+        <div className="space-y-6">
+          <section className="bg-white border border-border rounded-md">
+            <header className="px-5 py-3.5 border-b border-border">
+              <h2 className="text-[13px] font-bold text-primary-dark">
+                Community
+              </h2>
+            </header>
+            <ul className="divide-y divide-border">
+              <SnapshotRow
+                label="Total residents"
+                value={stats?.counters.residents}
+                href="/admin/residents"
+              />
+              <SnapshotRow
+                label="Committee members"
+                value={stats?.counters.committeeMembers}
+                href="/admin/committee"
+              />
+              <SnapshotRow
+                label="Total notices"
+                value={stats?.counters.notices}
+                href="/admin/notices"
+              />
+              <SnapshotRow
+                label="Upcoming events"
+                value={stats?.counters.upcomingEvents}
+                href="/admin/events"
+              />
             </ul>
-          ) : (
-            <p className="text-sm text-muted">No applications yet.</p>
-          )}
-          <Link
-            href="/admin/applications/membership"
-            className="inline-block mt-4 text-xs text-secondary hover:underline"
-          >
-            View all →
-          </Link>
-        </div>
-      </div>
+          </section>
 
-      {/* People + System status side-by-side */}
-      <div className="grid lg:grid-cols-2 gap-6">
-        <div className="bg-surface border border-border rounded-lg p-6">
-          <h3 className="font-semibold text-primary mb-3">People</h3>
-          <ul className="space-y-2 text-sm">
-            <li className="flex justify-between">
-              <span className="text-muted">Total residents</span>
-              <Link href="/admin/residents" className="text-primary font-semibold hover:text-secondary">
-                {stats?.counters.residents ?? "—"}
-              </Link>
-            </li>
-            <li className="flex justify-between">
-              <span className="text-muted">Committee members</span>
-              <Link href="/admin/committee" className="text-primary font-semibold hover:text-secondary">
-                {stats?.counters.committeeMembers ?? "—"}
-              </Link>
-            </li>
-          </ul>
-        </div>
-        <div className="bg-surface border border-border rounded-lg p-6">
-          <h3 className="font-semibold text-primary mb-3">System Status</h3>
-          <ul className="space-y-2 text-sm">
-            <li className="flex justify-between">
-              <span className="text-muted">API</span>
-              <span className="text-success font-semibold">● Online</span>
-            </li>
-            <li className="flex justify-between">
-              <span className="text-muted">Database</span>
-              <span className="text-success font-semibold">● Connected</span>
-            </li>
-            <li className="flex justify-between">
-              <span className="text-muted">Your role</span>
-              <span className="text-primary font-semibold">
-                {user?.role.replace("_", " ")}
-              </span>
-            </li>
-          </ul>
+          <section className="bg-white border border-border rounded-md">
+            <header className="px-5 py-3.5 border-b border-border flex items-center gap-2">
+              <HiOutlineEnvelopeOpen className="text-[14px] text-amber-700" />
+              <h2 className="text-[13px] font-bold text-primary-dark">
+                Inbox
+              </h2>
+            </header>
+            <ul className="divide-y divide-border">
+              <SnapshotRow
+                label="Pending applications"
+                value={stats?.counters.pendingByType.membership}
+                href="/admin/applications/membership"
+                emphasize={
+                  (stats?.counters.pendingByType.membership ?? 0) > 0
+                }
+              />
+              <SnapshotRow
+                label="Unread messages"
+                value={stats?.counters.unreadMessages}
+                href="/admin/messages"
+                emphasize={(stats?.counters.unreadMessages ?? 0) > 0}
+              />
+            </ul>
+          </section>
         </div>
       </div>
     </div>
   );
 }
 
-function PendingCard({
+function SnapshotRow({
   label,
-  count,
+  value,
   href,
+  emphasize,
 }: {
   label: string;
-  count: number;
-  href: string;
+  value: number | undefined;
+  href?: string;
+  emphasize?: boolean;
 }) {
+  const body = (
+    <div className="flex items-center justify-between px-5 py-2.5">
+      <span className="text-[12px] text-muted">{label}</span>
+      <span
+        className={`font-mono text-[14px] font-bold tracking-tight ${
+          emphasize ? "text-amber-700" : "text-primary-dark"
+        }`}
+      >
+        {value ?? "—"}
+      </span>
+    </div>
+  );
   return (
-    <Link
-      href={href}
-      className={`border border-border rounded-lg p-4 hover:border-secondary transition ${
-        count > 0 ? "bg-warning/5" : ""
-      }`}
-    >
-      <div className="text-2xl font-bold text-primary">{count}</div>
-      <div className="text-xs text-muted mt-1">{label}</div>
-    </Link>
+    <li>
+      {href ? (
+        <Link
+          href={href}
+          className="block hover:bg-[#fafaf7] transition"
+        >
+          {body}
+        </Link>
+      ) : (
+        body
+      )}
+    </li>
   );
 }

@@ -95,14 +95,9 @@ export default async function NoticesPage({
                         </span>
                       )}
                     </div>
-                    <h2 className="font-bold text-lg text-primary group-hover:text-secondary transition tracking-tight">
+                    <h2 className="font-bold text-lg text-primary group-hover:text-amber-700 transition tracking-tight">
                       {n.title}
                     </h2>
-                    {n.titleBn && (
-                      <p className="text-sm text-muted font-bn mt-0.5" lang="bn">
-                        {n.titleBn}
-                      </p>
-                    )}
                     <div className="inline-flex items-center gap-1.5 text-xs text-muted mt-2">
                       <HiOutlineCalendar />
                       {formatDate(n.publishedAt)}
@@ -122,8 +117,8 @@ export default async function NoticesPage({
                 href={`/notices?page=${p}`}
                 className={`min-w-[40px] h-10 grid place-items-center rounded-lg text-sm font-semibold transition ${
                   p === data.page
-                    ? "bg-primary text-white shadow-md"
-                    : "bg-white border border-border hover:border-primary"
+                    ? "bg-amber-400 text-primary-dark shadow-md"
+                    : "bg-white border border-border hover:border-amber-400"
                 }`}
               >
                 {p}

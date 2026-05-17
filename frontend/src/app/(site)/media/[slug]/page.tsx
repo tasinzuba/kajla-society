@@ -75,11 +75,6 @@ export default async function GalleryDetailPage({
           <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight">
             {gallery.title}
           </h1>
-          {gallery.titleBn && (
-            <p className="text-lg md:text-xl text-white/85 font-bn mt-2" lang="bn">
-              {gallery.titleBn}
-            </p>
-          )}
           {gallery.description && (
             <p className="text-white/85 mt-3 max-w-2xl">
               {gallery.description}

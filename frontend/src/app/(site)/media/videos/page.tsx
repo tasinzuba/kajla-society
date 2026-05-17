@@ -40,7 +40,7 @@ export default async function VideosPage() {
           >
             Photos
           </Link>
-          <span className="px-5 py-2 rounded-lg text-sm font-semibold bg-primary text-white shadow">
+          <span className="px-5 py-2 rounded-lg text-sm font-semibold bg-amber-400 text-primary-dark shadow">
             Videos ({galleries.length})
           </span>
         </div>

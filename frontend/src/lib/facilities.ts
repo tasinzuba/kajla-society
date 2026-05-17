@@ -18,6 +18,7 @@ export type Facility = {
   description: string | null;
   address: string | null;
   phone: string | null;
+  donationPhone: string | null;
   email: string | null;
   website: string | null;
   image: string | null;
@@ -34,6 +35,7 @@ export type FacilityInput = {
   description?: string | null;
   address?: string | null;
   phone?: string | null;
+  donationPhone?: string | null;
   email?: string | null;
   website?: string | null;
   image?: string | null;

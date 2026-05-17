@@ -161,14 +161,6 @@ export default function ResidenceDirectoryPage() {
                   <h3 className="font-bold text-primary truncate tracking-tight">
                     {r.fullName}
                   </h3>
-                  {r.fullNameBn && (
-                    <p
-                      className="text-xs text-muted font-bn truncate"
-                      lang="bn"
-                    >
-                      {r.fullNameBn}
-                    </p>
-                  )}
                   <div className="text-xs text-muted mt-1">
                     H# <strong className="text-foreground">{r.houseNo}</strong>
                     {r.road && <span>, Rd {r.road}</span>}
@@ -193,8 +185,8 @@ export default function ResidenceDirectoryPage() {
                 onClick={() => setPage(p)}
                 className={`min-w-[40px] h-10 grid place-items-center rounded-lg text-sm font-semibold transition ${
                   p === page
-                    ? "bg-primary text-white shadow-md"
-                    : "bg-white border border-border hover:border-primary"
+                    ? "bg-amber-400 text-primary-dark shadow-md"
+                    : "bg-white border border-border hover:border-amber-400"
                 }`}
               >
                 {p}

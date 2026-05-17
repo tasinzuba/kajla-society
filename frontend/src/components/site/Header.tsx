@@ -6,139 +6,128 @@ import { useState, useEffect, useRef } from "react";
 import {
   HiOutlineBars3,
   HiOutlineXMark,
-  HiOutlinePhone,
-  HiOutlineEnvelope,
-  HiOutlineMapPin,
-  HiOutlineClock,
   HiChevronDown,
   HiArrowRight,
+  HiOutlinePhone,
 } from "react-icons/hi2";
-import {
-  FaFacebookF,
-  FaYoutube,
-  FaInstagram,
-} from "react-icons/fa6";
 import { mainNav, type NavItem } from "@/lib/nav";
 
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   useEffect(() => {
     setMobileOpen(false);
   }, [pathname]);
 
   return (
-    <header className="sticky top-0 z-50">
+    <header className="sticky top-0 z-50 shadow-md">
       {/* ============================================================
-         Utility bar
+         TOP BAR — Navy with seal logo + big title + CTA
       ============================================================ */}
-      <div className="bg-primary-dark text-white text-xs">
-        <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between flex-wrap gap-2">
-          <div className="flex items-center gap-5">
-            <span className="hidden sm:inline-flex items-center gap-1.5 text-white/85">
-              <HiOutlineMapPin className="text-sm text-accent" />
-              <span>Kajla, Dhaka</span>
-            </span>
-            <a
-              href="tel:+8801XXXXXXXXX"
-              className="inline-flex items-center gap-1.5 hover:text-accent transition"
-            >
-              <HiOutlinePhone className="text-sm text-accent" />
-              <span>+880 1XXX-XXXXXX</span>
-            </a>
-            <a
-              href="mailto:info@kajla.org"
-              className="hidden md:inline-flex items-center gap-1.5 hover:text-accent transition"
-            >
-              <HiOutlineEnvelope className="text-sm text-accent" />
-              <span>info@kajla.org</span>
-            </a>
-          </div>
-          <div className="flex items-center gap-4">
-            <span className="hidden sm:inline-flex items-center gap-1.5 text-white/80">
-              <HiOutlineClock className="text-sm text-accent" />
-              <span>9 AM – 5 PM</span>
-            </span>
-            <div className="flex items-center gap-1.5">
-              <SocialIconLink href="#" label="Facebook" Icon={FaFacebookF} />
-              <SocialIconLink href="#" label="YouTube" Icon={FaYoutube} />
-              <SocialIconLink href="#" label="Instagram" Icon={FaInstagram} />
+      <div className="bg-primary-dark text-white">
+        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+          {/* Logo + Name */}
+          <Link
+            href="/"
+            className="flex items-center gap-4 group flex-shrink-0 min-w-0"
+          >
+            {/* Circular seal-style logo */}
+            <div className="relative w-14 h-14 lg:w-[68px] lg:h-[68px] rounded-full bg-gradient-to-br from-white to-accent grid place-items-center shadow-lg ring-2 ring-white/20 flex-shrink-0">
+              <div className="absolute inset-1 rounded-full border-[1.5px] border-primary-dark/40" />
+              <div className="relative text-primary-dark font-extrabold text-lg lg:text-xl tracking-tight leading-none">
+                KS
+              </div>
+              <div className="absolute bottom-1 text-[7px] text-primary-dark/70 font-bold">
+                1980
+              </div>
             </div>
-          </div>
-        </div>
-      </div>
 
-      {/* ============================================================
-         Main bar
-      ============================================================ */}
-      <div
-        className={`transition-all duration-200 ${
-          scrolled ? "bg-white/95 backdrop-blur shadow-md" : "bg-white"
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
-          {/* Brand */}
-          <Link href="/" className="flex items-center gap-3 group flex-shrink-0">
-            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary to-primary-dark text-white grid place-items-center font-extrabold text-lg shadow-md group-hover:shadow-lg transition-shadow">
-              KS
-            </div>
-            <div className="hidden sm:block">
-              <div className="text-base lg:text-lg font-extrabold text-primary leading-tight tracking-tight">
+            <div className="min-w-0">
+              <div className="text-lg sm:text-2xl lg:text-[34px] font-extrabold tracking-wide uppercase leading-none whitespace-nowrap">
                 Kajla Society
               </div>
-              <div className="text-[10px] text-muted font-bn">কাজলা সোসাইটি</div>
+              <div className="hidden sm:block text-[11px] lg:text-xs text-emerald-light/90 mt-1.5 tracking-wider uppercase">
+                A Connected Community · Est. 1980
+              </div>
             </div>
           </Link>
 
-          {/* Desktop nav */}
-          <nav className="hidden xl:flex items-center gap-0.5 flex-1 justify-center">
-            {mainNav.map((item) => (
-              <DesktopNavItem key={item.href + item.label} item={item} pathname={pathname} />
-            ))}
-          </nav>
-
-          {/* CTA + mobile button */}
+          {/* CTA + mobile toggle */}
           <div className="flex items-center gap-2 flex-shrink-0">
             <Link
-              href="/services/membership"
-              className="hidden lg:inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary to-primary-light hover:from-primary-light hover:to-primary text-white text-sm font-semibold rounded-lg shadow-sm hover:shadow transition-all"
+              href="/contact"
+              className="hidden md:inline-flex items-center gap-2 px-5 lg:px-6 py-3 bg-amber-400 hover:bg-amber-300 text-primary-dark font-bold rounded-md shadow-lg transition-all hover:-translate-y-0.5 text-sm uppercase tracking-wide"
             >
-              Join Society
-              <HiArrowRight className="text-sm" />
+              <HiOutlinePhone className="text-base" />
+              <span>Contact Us</span>
             </Link>
             <button
               onClick={() => setMobileOpen((v) => !v)}
-              className="xl:hidden p-2 text-primary rounded-md hover:bg-accent transition"
+              className="xl:hidden p-2 text-white rounded-md hover:bg-white/10 transition"
               aria-label="Toggle menu"
               aria-expanded={mobileOpen}
             >
-              {mobileOpen ? <HiOutlineXMark size={26} /> : <HiOutlineBars3 size={26} />}
+              {mobileOpen ? <HiOutlineXMark size={28} /> : <HiOutlineBars3 size={28} />}
             </button>
           </div>
         </div>
-
-        {/* Mobile menu */}
-        {mobileOpen && (
-          <MobileMenu pathname={pathname} onClose={() => setMobileOpen(false)} />
-        )}
       </div>
+
+      {/* ============================================================
+         NAV BAR — Amber gold strip with navy bold links
+      ============================================================ */}
+      <div className="bg-amber-400 hidden xl:block">
+        <div className="max-w-7xl mx-auto px-4">
+          <nav className="flex items-center justify-center gap-0 flex-nowrap">
+            {mainNav.map((item) => (
+              <EmeraldNavItem
+                key={item.href + item.label}
+                item={item}
+                pathname={pathname}
+              />
+            ))}
+          </nav>
+        </div>
+      </div>
+
+      {/* Mobile menu */}
+      {mobileOpen && (
+        <div className="xl:hidden bg-amber-400 shadow-lg max-h-[calc(100vh-7rem)] overflow-y-auto">
+          <nav className="max-w-7xl mx-auto px-4 py-3 flex flex-col">
+            {mainNav.map((item) => (
+              <MobileNavItem
+                key={item.href + item.label}
+                item={item}
+                pathname={pathname}
+                onClose={() => setMobileOpen(false)}
+              />
+            ))}
+            <Link
+              href="/contact"
+              onClick={() => setMobileOpen(false)}
+              className="mt-5 mb-2 inline-flex justify-center items-center gap-2 px-4 py-3 bg-primary-dark hover:bg-primary text-white font-bold rounded-md shadow-md uppercase tracking-wide"
+            >
+              Contact Us
+              <HiArrowRight />
+            </Link>
+          </nav>
+        </div>
+      )}
     </header>
   );
 }
 
 // ============================================================
-// Desktop nav item with dropdown
+// Emerald strip nav item with dropdown
 // ============================================================
-function DesktopNavItem({ item, pathname }: { item: NavItem; pathname: string }) {
+function EmeraldNavItem({
+  item,
+  pathname,
+}: {
+  item: NavItem;
+  pathname: string;
+}) {
   const [open, setOpen] = useState(false);
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasChildren = (item.children?.length ?? 0) > 0;
@@ -168,10 +157,10 @@ function DesktopNavItem({ item, pathname }: { item: NavItem; pathname: string })
     >
       <Link
         href={item.href}
-        className={`inline-flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-md transition-all ${
+        className={`relative inline-flex items-center gap-1.5 px-3 lg:px-4 py-4 text-[14px] font-black uppercase tracking-wide transition-colors whitespace-nowrap ${
           active
-            ? "text-primary bg-accent"
-            : "text-foreground hover:text-primary hover:bg-accent/60"
+            ? "bg-[#FEAC00] text-black"
+            : "text-black hover:bg-amber-500/40"
         }`}
         aria-haspopup={hasChildren || undefined}
         aria-expanded={hasChildren ? open : undefined}
@@ -179,17 +168,19 @@ function DesktopNavItem({ item, pathname }: { item: NavItem; pathname: string })
         {item.label}
         {hasChildren && (
           <HiChevronDown
-            className={`text-xs transition-transform ${open ? "rotate-180" : ""}`}
+            className={`text-xs transition-transform ${
+              open ? "rotate-180" : ""
+            }`}
           />
         )}
       </Link>
 
       {hasChildren && open && (
         <div
-          className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-10"
+          className="absolute top-full left-0 pt-1 z-10"
           style={{ minWidth: "280px" }}
         >
-          <div className="bg-white border border-border rounded-xl shadow-xl overflow-hidden py-2 animate-fade-up">
+          <div className="bg-white border-t-4 border-amber-400 rounded-b-md shadow-2xl overflow-hidden py-2 animate-fade-up">
             {item.children!.map((child) => {
               const childActive =
                 pathname === child.href ||
@@ -200,15 +191,17 @@ function DesktopNavItem({ item, pathname }: { item: NavItem; pathname: string })
                 <Link
                   key={child.href + child.label}
                   href={child.href}
-                  className={`block px-4 py-2.5 transition-colors ${
+                  className={`block px-5 py-3 transition-colors border-l-4 ${
                     childActive
-                      ? "bg-accent text-primary"
-                      : "text-foreground hover:bg-accent/40 hover:text-primary"
+                      ? "bg-amber-50 border-amber-400 text-primary-dark"
+                      : "border-transparent text-foreground hover:bg-amber-50 hover:border-amber-400 hover:text-primary-dark"
                   }`}
                 >
-                  <div className="text-sm font-semibold">{child.label}</div>
+                  <div className="text-sm font-bold uppercase tracking-wider">
+                    {child.label}
+                  </div>
                   {child.description && (
-                    <div className="text-xs text-muted mt-0.5 leading-snug">
+                    <div className="text-xs text-muted mt-0.5 leading-snug normal-case tracking-normal font-normal">
                       {child.description}
                     </div>
                   )}
@@ -223,38 +216,8 @@ function DesktopNavItem({ item, pathname }: { item: NavItem; pathname: string })
 }
 
 // ============================================================
-// Mobile menu with accordion submenus
+// Mobile nav item with accordion
 // ============================================================
-function MobileMenu({
-  pathname,
-  onClose,
-}: {
-  pathname: string;
-  onClose: () => void;
-}) {
-  return (
-    <nav className="xl:hidden border-t border-border bg-white shadow-lg max-h-[calc(100vh-7rem)] overflow-y-auto">
-      <div className="max-w-7xl mx-auto px-4 py-3 flex flex-col">
-        {mainNav.map((item) => (
-          <MobileNavItem
-            key={item.href + item.label}
-            item={item}
-            pathname={pathname}
-            onClose={onClose}
-          />
-        ))}
-        <Link
-          href="/services/membership"
-          onClick={onClose}
-          className="mt-5 mb-3 inline-flex justify-center items-center gap-2 px-4 py-3 bg-gradient-to-r from-primary to-primary-light text-white text-sm font-semibold rounded-xl shadow-md"
-        >
-          Join Society <HiArrowRight />
-        </Link>
-      </div>
-    </nav>
-  );
-}
-
 function MobileNavItem({
   item,
   pathname,
@@ -269,7 +232,6 @@ function MobileNavItem({
   const childActive = item.children?.some(
     (c) => pathname === c.href || pathname.startsWith(c.href.split("#")[0])
   );
-
   const [open, setOpen] = useState(Boolean(childActive));
 
   if (!hasChildren) {
@@ -277,43 +239,46 @@ function MobileNavItem({
       <Link
         href={item.href}
         onClick={onClose}
-        className={`px-3 py-3 text-sm font-medium border-b border-border last:border-0 flex items-center justify-between ${
-          active ? "text-primary" : "text-foreground"
+        className={`px-3 py-3 text-sm font-extrabold uppercase tracking-wider border-b border-amber-500/30 last:border-0 flex items-center justify-between ${
+          active
+            ? "bg-[#FEAC00] text-black"
+            : "text-black"
         }`}
       >
         <span>{item.label}</span>
-        {item.labelBn && (
-          <span className="text-xs text-muted font-bn">{item.labelBn}</span>
-        )}
       </Link>
     );
   }
 
   return (
-    <div className="border-b border-border last:border-0">
+    <div className="border-b border-amber-500/30 last:border-0">
       <button
         onClick={() => setOpen((v) => !v)}
-        className={`w-full px-3 py-3 text-sm font-medium flex items-center justify-between transition-colors ${
-          childActive ? "text-primary" : "text-foreground"
+        className={`w-full px-3 py-3 text-sm font-extrabold uppercase tracking-wider flex items-center justify-between transition-colors ${
+          childActive
+            ? "bg-[#FEAC00] text-black"
+            : "text-black"
         }`}
         aria-expanded={open}
       >
         <span>{item.label}</span>
         <HiChevronDown
-          className={`text-base transition-transform ${open ? "rotate-180" : ""}`}
+          className={`text-base transition-transform ${
+            open ? "rotate-180" : ""
+          }`}
         />
       </button>
       {open && (
-        <div className="pb-2 pl-3 border-l-2 border-accent ml-3">
+        <div className="pb-2 pl-3 border-l-4 border-amber-500/50 ml-3 bg-amber-300/40">
           {item.children!.map((child) => (
             <Link
               key={child.href + child.label}
               href={child.href}
               onClick={onClose}
-              className={`block px-3 py-2 text-sm transition-colors ${
+              className={`block px-3 py-2 text-sm font-semibold transition-colors ${
                 pathname === child.href
-                  ? "text-primary font-semibold"
-                  : "text-foreground/80 hover:text-primary"
+                  ? "text-primary-dark"
+                  : "text-primary-dark/80 hover:text-primary-dark"
               }`}
             >
               {child.label}
@@ -322,30 +287,5 @@ function MobileNavItem({
         </div>
       )}
     </div>
-  );
-}
-
-// ============================================================
-// Small helpers
-// ============================================================
-function SocialIconLink({
-  href,
-  label,
-  Icon,
-}: {
-  href: string;
-  label: string;
-  Icon: React.ComponentType<{ className?: string }>;
-}) {
-  return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label={label}
-      className="w-6 h-6 grid place-items-center rounded-full text-white/70 hover:text-accent hover:bg-white/10 transition"
-    >
-      <Icon className="text-[10px]" />
-    </a>
   );
 }

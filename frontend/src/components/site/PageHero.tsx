@@ -51,11 +51,6 @@ export function PageHero({ title, titleBn, subtitle, image, crumbs }: Props) {
         <h1 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight">
           {title}
         </h1>
-        {titleBn && (
-          <p className="text-base md:text-lg text-accent font-bn mt-2" lang="bn">
-            {titleBn}
-          </p>
-        )}
         {subtitle && (
           <p className="text-sm md:text-base text-white/80 mt-3 max-w-2xl">
             {subtitle}

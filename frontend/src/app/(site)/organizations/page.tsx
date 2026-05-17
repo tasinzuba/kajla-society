@@ -62,11 +62,6 @@ export default async function OrganizationsPage() {
                   <h3 className="font-bold text-lg text-primary tracking-tight">
                     {o.name}
                   </h3>
-                  {o.nameBn && (
-                    <p className="text-xs text-muted font-bn mt-0.5" lang="bn">
-                      {o.nameBn}
-                    </p>
-                  )}
                   {o.description && (
                     <p className="text-sm text-muted mt-2 line-clamp-3 leading-relaxed">
                       {o.description}

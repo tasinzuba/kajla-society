@@ -31,6 +31,7 @@ export function FacilityForm({ initial }: Props) {
   const [description, setDescription] = useState(initial?.description ?? "");
   const [address, setAddress] = useState(initial?.address ?? "");
   const [phone, setPhone] = useState(initial?.phone ?? "");
+  const [donationPhone, setDonationPhone] = useState(initial?.donationPhone ?? "");
   const [email, setEmail] = useState(initial?.email ?? "");
   const [website, setWebsite] = useState(initial?.website ?? "");
   const [image, setImage] = useState(initial?.image ?? "");
@@ -75,6 +76,7 @@ export function FacilityForm({ initial }: Props) {
       description: description.trim() || null,
       address: address.trim() || null,
       phone: phone.trim() || null,
+      donationPhone: category === "RELIGIOUS" ? donationPhone.trim() || null : null,
       email: email.trim() || null,
       website: website.trim() || null,
       image: image || null,
@@ -209,6 +211,25 @@ export function FacilityForm({ initial }: Props) {
           </div>
         </div>
 
+        {category === "RELIGIOUS" && (
+          <div className="p-4 rounded-lg bg-emerald-faint border border-emerald-pale">
+            <label className="block text-xs font-bold text-emerald-dark mb-1.5 uppercase tracking-wider">
+              Donation Phone (Bkash / Nagad / Cash)
+            </label>
+            <input
+              value={donationPhone}
+              onChange={(e) => setDonationPhone(e.target.value)}
+              placeholder="e.g. 01XXX-XXXXXX"
+              className="w-full px-4 py-2 border border-emerald-pale rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-emerald/40"
+            />
+            <p className="text-[11px] text-emerald-dark/80 mt-2">
+              This number will be shown as a prominent &ldquo;Donate&rdquo; button
+              on the public Religious Places page. Leave blank to hide the
+              button.
+            </p>
+          </div>
+        )}
+
         <div>
           <label className="block text-xs font-semibold text-primary mb-1.5 uppercase">
             Website
@@ -247,15 +268,26 @@ export function FacilityForm({ initial }: Props) {
 
         <div>
           <label className="block text-xs font-semibold text-primary mb-1.5 uppercase">
-            Image
+            Image <span className="text-danger">*</span>
+            <span className="ml-2 text-[10px] font-normal text-muted normal-case tracking-normal">
+              Every facility should have a photo for the public site
+            </span>
           </label>
-          {image && (
+          {image ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={mediaUrl(image) ?? ""}
               alt={name}
-              className="w-32 h-32 object-cover rounded-lg border border-border mb-3"
+              className="w-full max-w-md aspect-video object-cover rounded-lg border border-border mb-3 shadow-sm"
             />
+          ) : (
+            <div className="w-full max-w-md aspect-video rounded-lg border-2 border-dashed border-border bg-background grid place-items-center text-center mb-3">
+              <div>
+                <div className="text-4xl mb-2 opacity-50">🏢</div>
+                <div className="text-sm text-muted">No image uploaded</div>
+                <div className="text-[11px] text-muted/80">Recommended: 1200×800px</div>
+              </div>
+            </div>
           )}
           <input
             ref={imageInputRef}
@@ -273,7 +305,7 @@ export function FacilityForm({ initial }: Props) {
               type="button"
               onClick={() => imageInputRef.current?.click()}
               disabled={uploading}
-              className="px-3 py-2 border border-dashed border-border rounded text-sm text-muted hover:border-secondary hover:text-secondary transition disabled:opacity-50"
+              className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary-light transition disabled:opacity-50"
             >
               {uploading ? "Uploading..." : image ? "Change image" : "+ Upload image"}
             </button>

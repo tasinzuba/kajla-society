@@ -31,7 +31,7 @@ export default async function MediaIndexPage() {
 
       <div className="max-w-6xl mx-auto px-4 py-12">
         <div className="flex gap-2 mb-10 p-1 bg-white border border-border rounded-xl w-fit shadow-sm">
-          <span className="px-5 py-2 rounded-lg text-sm font-semibold bg-primary text-white shadow">
+          <span className="px-5 py-2 rounded-lg text-sm font-semibold bg-amber-400 text-primary-dark shadow">
             All ({galleries.length})
           </span>
           <Link

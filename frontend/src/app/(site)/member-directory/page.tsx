@@ -5,13 +5,11 @@ import {
 } from "react-icons/hi2";
 import { listCommitteePublic, type TermGroup } from "@/lib/committee";
 import { mediaUrl } from "@/lib/media";
-import { PageHero } from "@/components/site/PageHero";
-import { stockImages } from "@/lib/images";
 
-export const metadata = { title: "Member Directory" };
+export const metadata = { title: "Member List" };
 export const dynamic = "force-dynamic";
 
-export default async function MemberDirectoryPage() {
+export default async function MemberListPage() {
   let terms: TermGroup[] = [];
   try {
     terms = await listCommitteePublic();
@@ -21,17 +19,18 @@ export default async function MemberDirectoryPage() {
 
   return (
     <>
-      <PageHero
-        title="Member Directory"
-        titleBn="সদস্য তালিকা"
-        subtitle="Executive committee members of Kajla Society — present and past."
-        image={stockImages.heroMembers}
-        crumbs={[{ label: "Member Directory" }]}
-      />
+      <div className="mb-8">
+        <h2 className="text-2xl lg:text-3xl font-extrabold text-primary-dark tracking-tight">
+          Member List
+        </h2>
+        <p className="text-muted mt-2">
+          Executive committee members of Kajla Society — present and past.
+        </p>
+      </div>
 
-      <div className="max-w-6xl mx-auto px-4 py-12">
+      <div>
         {terms.length === 0 ? (
-          <div className="bg-white border border-border rounded-2xl p-16 text-center shadow-sm">
+          <div className="bg-white border border-border rounded-md p-16 text-center shadow-sm">
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-accent grid place-items-center">
               <HiOutlineUserGroup className="text-3xl text-primary" />
             </div>
@@ -39,13 +38,13 @@ export default async function MemberDirectoryPage() {
           </div>
         ) : (
           terms.map(({ term, members }, idx) => (
-            <section key={term} className="mb-16">
-              <header className="flex items-center gap-3 mb-8">
-                <h2 className="text-2xl lg:text-3xl font-extrabold text-primary tracking-tight">
+            <section key={term} className="mb-12">
+              <header className="flex items-center gap-3 mb-6">
+                <h3 className="text-xl lg:text-2xl font-extrabold text-primary tracking-tight">
                   Term {term}
-                </h2>
+                </h3>
                 {idx === 0 && (
-                  <span className="inline-block px-3 py-1 text-[10px] uppercase tracking-widest bg-green-100 text-green-700 rounded-full font-bold">
+                  <span className="inline-block px-3 py-1 text-[10px] uppercase tracking-widest bg-amber-400 text-primary-dark rounded font-bold">
                     Current
                   </span>
                 )}
@@ -55,7 +54,7 @@ export default async function MemberDirectoryPage() {
                 </span>
               </header>
 
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              <div className="grid sm:grid-cols-2 gap-5">
                 {members.map((m) => (
                   <div
                     key={m.id}
@@ -78,25 +77,12 @@ export default async function MemberDirectoryPage() {
                         <p className="text-xs uppercase tracking-wider text-accent font-bold">
                           {m.role}
                         </p>
-                        {m.roleBn && (
-                          <p
-                            className="text-xs text-white/85 font-bn"
-                            lang="bn"
-                          >
-                            {m.roleBn}
-                          </p>
-                        )}
                       </div>
                     </div>
                     <div className="p-5">
                       <h3 className="font-bold text-lg text-primary tracking-tight">
                         {m.name}
                       </h3>
-                      {m.nameBn && (
-                        <p className="text-xs text-muted font-bn" lang="bn">
-                          {m.nameBn}
-                        </p>
-                      )}
                       {m.bio && (
                         <p className="text-sm text-muted mt-3 line-clamp-3 leading-relaxed">
                           {m.bio}

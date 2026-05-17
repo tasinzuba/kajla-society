@@ -96,7 +96,7 @@ export default async function NoticeDetailPage({
               href={mediaUrl(notice.attachment) ?? "#"}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary-light text-white rounded-lg font-semibold transition shadow-md hover:shadow-lg"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-400 hover:bg-amber-300 text-primary-dark rounded-md font-bold transition shadow-md hover:shadow-lg uppercase tracking-wider text-sm"
             >
               <HiOutlineDocumentArrowDown />
               Download attachment

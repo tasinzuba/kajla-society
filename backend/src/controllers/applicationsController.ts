@@ -55,31 +55,95 @@ async function notifyApplicant(
 // Membership
 // ============================================================
 
+const childSchema = z.object({
+  name: z.string().max(120),
+  dateOfBirth: z.string().optional().nullable(),
+  school: z.string().max(120).optional().nullable(),
+});
+
 export const membershipSchema = z.object({
+  // Membership Type & Declaration
+  membershipType: z.string().min(1).max(50),
+  agreedDeclaration: z.boolean(),
+  proposerName: z.string().max(120).optional().nullable(),
+  proposerMembershipNo: z.string().max(50).optional().nullable(),
+  seconderName: z.string().max(120).optional().nullable(),
+  seconderMembershipNo: z.string().max(50).optional().nullable(),
+
+  // Personal Information
   fullName: z.string().min(1).max(120),
+  fullNameBn: z.string().max(120).optional().nullable(),
+  fatherName: z.string().max(120).optional().nullable(),
+  motherName: z.string().max(120).optional().nullable(),
+  spouseName: z.string().max(120).optional().nullable(),
+  dateOfBirth: z.string().optional().nullable(),
+  gender: z.string().max(20).optional().nullable(),
+  bloodGroup: z.string().max(10).optional().nullable(),
+  profession: z.string().max(120).optional().nullable(),
+
+  // Contact Information
   email: z.string().email(),
-  phone: z.string().min(5).max(30),
-  houseNo: z.string().min(1).max(50),
-  road: z.string().max(50).optional().nullable(),
-  block: z.string().max(50).optional().nullable(),
-  nidNumber: z.string().max(50).optional().nullable(),
-  occupation: z.string().max(100).optional().nullable(),
-  documents: z.array(z.string()).optional(),
+  mobile: z.string().min(5).max(30),
+  officePhone: z.string().max(30).optional().nullable(),
+  residencePhone: z.string().max(30).optional().nullable(),
+
+  // Children
+  children: z.array(childSchema).optional().nullable(),
+
+  // Professional Information
+  designation: z.string().max(120).optional().nullable(),
+  organization: z.string().max(120).optional().nullable(),
+
+  // Address & Property
+  residenceAddress: z.string().max(500).optional().nullable(),
+  propertyOwner: z.string().max(120).optional().nullable(),
+  propertyScheduleSummary: z.string().max(500).optional().nullable(),
+  relationshipToProperty: z.string().max(50).optional().nullable(),
+
+  // Documents (single file URLs)
+  photoUrl: z.string().optional().nullable(),
+  nidUrl: z.string().optional().nullable(),
+  taxReceiptUrl: z.string().optional().nullable(),
 });
 
 export async function submitMembership(req: Request, res: Response): Promise<void> {
   const input = req.body as z.infer<typeof membershipSchema>;
+
+  if (!input.agreedDeclaration) {
+    throw ApiError.badRequest("You must agree to the declaration and terms.");
+  }
+
   const created = await prisma.membershipApplication.create({
     data: {
+      membershipType: input.membershipType,
+      agreedDeclaration: input.agreedDeclaration,
+      proposerName: input.proposerName ?? null,
+      proposerMembershipNo: input.proposerMembershipNo ?? null,
+      seconderName: input.seconderName ?? null,
+      seconderMembershipNo: input.seconderMembershipNo ?? null,
       fullName: input.fullName,
+      fullNameBn: input.fullNameBn ?? null,
+      fatherName: input.fatherName ?? null,
+      motherName: input.motherName ?? null,
+      spouseName: input.spouseName ?? null,
+      dateOfBirth: input.dateOfBirth ? new Date(input.dateOfBirth) : null,
+      gender: input.gender ?? null,
+      bloodGroup: input.bloodGroup ?? null,
+      profession: input.profession ?? null,
       email: input.email,
-      phone: input.phone,
-      houseNo: input.houseNo,
-      road: input.road ?? null,
-      block: input.block ?? null,
-      nidNumber: input.nidNumber ?? null,
-      occupation: input.occupation ?? null,
-      documents: input.documents ?? [],
+      mobile: input.mobile,
+      officePhone: input.officePhone ?? null,
+      residencePhone: input.residencePhone ?? null,
+      children: input.children ?? [],
+      designation: input.designation ?? null,
+      organization: input.organization ?? null,
+      residenceAddress: input.residenceAddress ?? null,
+      propertyOwner: input.propertyOwner ?? null,
+      propertyScheduleSummary: input.propertyScheduleSummary ?? null,
+      relationshipToProperty: input.relationshipToProperty ?? null,
+      photoUrl: input.photoUrl ?? null,
+      nidUrl: input.nidUrl ?? null,
+      taxReceiptUrl: input.taxReceiptUrl ?? null,
     },
   });
 

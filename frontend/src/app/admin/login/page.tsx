@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   HiOutlineEnvelope,
@@ -15,7 +14,6 @@ import {
 import { login } from "@/lib/auth";
 
 export default function LoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -28,10 +26,12 @@ export default function LoginPage() {
     setSubmitting(true);
     try {
       await login(email, password);
-      router.replace("/admin");
+      // Full page reload so AdminShell's useAuth re-mounts and reads the new
+      // session from localStorage. Using router.replace() keeps stale state
+      // and bounces us back to /admin/login.
+      window.location.href = "/admin";
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
-    } finally {
       setSubmitting(false);
     }
   }

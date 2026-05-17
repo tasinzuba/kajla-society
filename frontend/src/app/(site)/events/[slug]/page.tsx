@@ -85,11 +85,6 @@ export default async function EventDetailPage({
             <h1 className="text-3xl md:text-5xl font-extrabold leading-tight tracking-tight">
               {event.title}
             </h1>
-            {event.titleBn && (
-              <p className="text-lg md:text-xl text-white/85 font-bn mt-2" lang="bn">
-                {event.titleBn}
-              </p>
-            )}
           </div>
         </div>
       )}
@@ -113,11 +108,6 @@ export default async function EventDetailPage({
               <h1 className="text-4xl lg:text-5xl font-extrabold text-primary leading-tight tracking-tight mb-3">
                 {event.title}
               </h1>
-              {event.titleBn && (
-                <p className="text-xl text-muted font-bn" lang="bn">
-                  {event.titleBn}
-                </p>
-              )}
             </header>
           </>
         )}

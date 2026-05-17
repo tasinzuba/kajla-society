@@ -5,7 +5,6 @@ import {
   HiOutlineMapPin,
   HiOutlineClock,
   HiArrowRight,
-  HiOutlineChatBubbleBottomCenterText,
 } from "react-icons/hi2";
 import {
   FaFacebookF,
@@ -22,46 +21,6 @@ export function Footer() {
       <div className="h-1 bg-gradient-to-r from-secondary via-primary-light to-secondary" />
 
       {/* ============================================================
-         CTA strip — Join Society
-      ============================================================ */}
-      <div className="bg-primary py-12 relative overflow-hidden">
-        <div className="absolute inset-0 bg-pattern-dots opacity-20" />
-        <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-white/5 blur-3xl" />
-        <div className="absolute -bottom-20 -left-20 w-80 h-80 rounded-full bg-secondary/20 blur-3xl" />
-
-        <div className="relative max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-6 items-center">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur border border-white/20 rounded-full text-[10px] uppercase tracking-widest text-accent mb-3">
-              <HiOutlineChatBubbleBottomCenterText />
-              Be part of us
-            </div>
-            <h3 className="text-3xl lg:text-4xl font-extrabold mb-2 tracking-tight">
-              Join our growing community
-            </h3>
-            <p className="text-accent text-base lg:text-lg leading-relaxed max-w-xl">
-              Connect with neighbors, access society services, and stay updated
-              with everything happening in Kajla.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-3 lg:justify-end">
-            <Link
-              href="/services/membership"
-              className="inline-flex items-center gap-2 px-6 py-3.5 bg-white text-primary font-semibold rounded-xl hover:bg-accent transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5"
-            >
-              Become a Member
-              <HiArrowRight />
-            </Link>
-            <Link
-              href="/contact"
-              className="inline-flex items-center px-6 py-3.5 border-2 border-white/30 hover:border-white hover:bg-white/10 backdrop-blur text-white font-semibold rounded-xl transition-all"
-            >
-              Contact Us
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* ============================================================
          Main grid
       ============================================================ */}
       <div className="max-w-7xl mx-auto px-4 py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10">
@@ -73,7 +32,7 @@ export function Footer() {
             </div>
             <div>
               <div className="text-xl font-extrabold tracking-tight">Kajla Society</div>
-              <div className="text-[11px] text-accent font-bn">কাজলা সোসাইটি</div>
+              <div className="text-[11px] text-accent uppercase tracking-widest">Est. 1980</div>
             </div>
           </div>
           <p className="text-sm text-white/75 leading-relaxed mb-6 max-w-sm">
@@ -161,29 +120,22 @@ export function Footer() {
           </ul>
         </div>
 
-        {/* Services */}
+        {/* Stay Connected */}
         <div className="lg:col-span-3">
           <h4 className="font-bold mb-5 text-white text-sm uppercase tracking-widest relative pb-2 after:absolute after:bottom-0 after:left-0 after:w-8 after:h-0.5 after:bg-accent">
-            Apply Online
+            Stay Connected
           </h4>
-          <ul className="space-y-3 text-sm">
-            {[
-              { label: "Membership Registration", href: "/services/membership" },
-              { label: "Car Sticker Application", href: "/services/car-sticker" },
-              { label: "Adopt a Road", href: "/services/adopt-road" },
-              { label: "Adopt a Gate", href: "/services/adopt-gate" },
-            ].map((l) => (
-              <li key={l.href}>
-                <Link
-                  href={l.href}
-                  className="inline-flex items-center gap-1.5 text-white/75 hover:text-accent hover:translate-x-1 transition-all"
-                >
-                  <span className="text-accent text-[10px]">▸</span>
-                  {l.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <p className="text-sm text-white/75 leading-relaxed mb-5">
+            Subscribe to community updates, event invites, and important
+            society notices straight to your inbox.
+          </p>
+          <Link
+            href="/notices"
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-white/10 hover:bg-white/15 border border-white/20 rounded-lg text-sm font-semibold transition-all"
+          >
+            Browse Notices
+            <HiArrowRight className="text-xs" />
+          </Link>
 
           {/* Social */}
           <div className="mt-7">

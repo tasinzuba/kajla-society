@@ -8,16 +8,55 @@ export type ApplicationStatus = "PENDING" | "APPROVED" | "REJECTED";
 // Membership
 // ============================================================
 
+export type ChildInfo = {
+  name: string;
+  dateOfBirth?: string | null;
+  school?: string | null;
+};
+
 export type MembershipInput = {
+  // Membership Type & Declaration
+  membershipType: string;
+  agreedDeclaration: boolean;
+  proposerName?: string | null;
+  proposerMembershipNo?: string | null;
+  seconderName?: string | null;
+  seconderMembershipNo?: string | null;
+
+  // Personal
   fullName: string;
+  fullNameBn?: string | null;
+  fatherName?: string | null;
+  motherName?: string | null;
+  spouseName?: string | null;
+  dateOfBirth?: string | null;
+  gender?: string | null;
+  bloodGroup?: string | null;
+  profession?: string | null;
+
+  // Contact
   email: string;
-  phone: string;
-  houseNo: string;
-  road?: string | null;
-  block?: string | null;
-  nidNumber?: string | null;
-  occupation?: string | null;
-  documents?: string[];
+  mobile: string;
+  officePhone?: string | null;
+  residencePhone?: string | null;
+
+  // Children
+  children?: ChildInfo[];
+
+  // Professional
+  designation?: string | null;
+  organization?: string | null;
+
+  // Address & Property
+  residenceAddress?: string | null;
+  propertyOwner?: string | null;
+  propertyScheduleSummary?: string | null;
+  relationshipToProperty?: string | null;
+
+  // Documents
+  photoUrl?: string | null;
+  nidUrl?: string | null;
+  taxReceiptUrl?: string | null;
 };
 
 export type MembershipApplication = MembershipInput & {

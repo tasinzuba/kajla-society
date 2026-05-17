@@ -2,12 +2,28 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
+import type { IconType } from "react-icons";
+import {
+  HiOutlineSquares2X2,
+  HiOutlineDocumentText,
+  HiOutlinePencilSquare,
+  HiOutlineCalendarDays,
+  HiOutlineMegaphone,
+  HiOutlinePhoto,
+  HiOutlineUserGroup,
+  HiOutlineHome,
+  HiOutlineUsers,
+  HiOutlineClipboardDocumentList,
+  HiOutlineEnvelope,
+  HiOutlinePlayCircle,
+  HiOutlineBuildingOffice2,
+  HiOutlineCog6Tooth,
+} from "react-icons/hi2";
 
 type NavItem = {
   label: string;
   href: string;
-  icon: string;
+  Icon: IconType;
 };
 
 type NavGroup = {
@@ -17,40 +33,43 @@ type NavGroup = {
 
 const groups: NavGroup[] = [
   {
-    items: [{ label: "Dashboard", href: "/admin", icon: "▣" }],
+    items: [{ label: "Overview", href: "/admin", Icon: HiOutlineSquares2X2 }],
   },
   {
     heading: "Content",
     items: [
-      { label: "Pages", href: "/admin/pages", icon: "▤" },
-      { label: "Articles / News", href: "/admin/articles", icon: "✎" },
-      { label: "Events", href: "/admin/events", icon: "📅" },
-      { label: "Notices", href: "/admin/notices", icon: "📌" },
-      { label: "Gallery", href: "/admin/gallery", icon: "🖼" },
+      { label: "Pages", href: "/admin/pages", Icon: HiOutlineDocumentText },
+      { label: "Articles", href: "/admin/articles", Icon: HiOutlinePencilSquare },
+      { label: "Events", href: "/admin/events", Icon: HiOutlineCalendarDays },
+      { label: "Notices", href: "/admin/notices", Icon: HiOutlineMegaphone },
+      { label: "Gallery", href: "/admin/gallery", Icon: HiOutlinePhoto },
     ],
   },
   {
     heading: "People",
     items: [
-      { label: "Member Directory", href: "/admin/committee", icon: "👥" },
-      { label: "Residence Directory", href: "/admin/residents", icon: "🏠" },
-      { label: "Users", href: "/admin/users", icon: "👤" },
+      { label: "Committee", href: "/admin/committee", Icon: HiOutlineUserGroup },
+      { label: "Residents", href: "/admin/residents", Icon: HiOutlineHome },
+      { label: "Users", href: "/admin/users", Icon: HiOutlineUsers },
     ],
   },
   {
-    heading: "Applications",
+    heading: "Inbox",
     items: [
-      { label: "Membership", href: "/admin/applications/membership", icon: "📋" },
-      { label: "Car Sticker", href: "/admin/applications/car-sticker", icon: "🚗" },
-      { label: "Adoptions", href: "/admin/applications/adoptions", icon: "🤝" },
-      { label: "Messages", href: "/admin/messages", icon: "✉" },
+      {
+        label: "Applications",
+        href: "/admin/applications/membership",
+        Icon: HiOutlineClipboardDocumentList,
+      },
+      { label: "Messages", href: "/admin/messages", Icon: HiOutlineEnvelope },
     ],
   },
   {
     heading: "Site",
     items: [
-      { label: "Facilities", href: "/admin/facilities", icon: "🏢" },
-      { label: "Settings", href: "/admin/settings", icon: "⚙" },
+      { label: "Hero Slider", href: "/admin/hero-slides", Icon: HiOutlinePlayCircle },
+      { label: "Facilities", href: "/admin/facilities", Icon: HiOutlineBuildingOffice2 },
+      { label: "Settings", href: "/admin/settings", Icon: HiOutlineCog6Tooth },
     ],
   },
 ];
@@ -59,30 +78,34 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 bg-primary-dark text-white flex flex-col h-screen sticky top-0">
-      {/* Brand */}
-      <Link
-        href="/admin"
-        className="flex items-center gap-3 px-5 py-5 border-b border-white/10"
-        onClick={onNavigate}
-      >
-        <div className="w-9 h-9 rounded-full bg-accent text-primary grid place-items-center font-bold">
-          KS
-        </div>
-        <div>
-          <div className="font-bold text-sm">Kajla Society</div>
-          <div className="text-[10px] text-accent uppercase tracking-wider">
-            Admin Panel
+    <aside className="w-60 bg-[#0b1530] text-white flex flex-col h-screen sticky top-0 border-r border-white/[0.06]">
+      {/* Brand / workspace */}
+      <div className="px-4 py-4 border-b border-white/[0.06]">
+        <Link
+          href="/admin"
+          className="flex items-center gap-2.5 group"
+          onClick={onNavigate}
+        >
+          <div className="w-8 h-8 rounded bg-amber-400 text-[#0b1530] grid place-items-center font-black text-[13px] flex-shrink-0">
+            K
           </div>
-        </div>
-      </Link>
+          <div className="min-w-0 flex-1">
+            <div className="text-[13px] font-bold tracking-tight truncate text-white">
+              Kajla Society
+            </div>
+            <div className="text-[10px] text-white/40 font-medium truncate">
+              admin.kajla
+            </div>
+          </div>
+        </Link>
+      </div>
 
       {/* Nav */}
-      <nav className="flex-1 overflow-y-auto py-4">
+      <nav className="flex-1 overflow-y-auto py-3 px-2">
         {groups.map((group, gi) => (
-          <div key={gi} className="mb-4">
+          <div key={gi} className={gi === 0 ? "mb-3" : "mb-3"}>
             {group.heading && (
-              <div className="px-5 py-2 text-[10px] uppercase tracking-wider text-white/40 font-semibold">
+              <div className="px-2.5 mt-3 mb-1.5 text-[10px] uppercase tracking-[0.12em] text-white/35 font-semibold">
                 {group.heading}
               </div>
             )}
@@ -95,15 +118,18 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
                   key={item.href}
                   href={item.href}
                   onClick={onNavigate}
-                  className={cn(
-                    "flex items-center gap-3 px-5 py-2.5 text-sm transition border-l-2",
+                  className={`flex items-center gap-2.5 px-2.5 py-1.5 mb-0.5 text-[13px] font-medium rounded-md transition ${
                     active
-                      ? "bg-primary border-accent text-accent"
-                      : "border-transparent text-white/80 hover:bg-primary/50 hover:text-white"
-                  )}
+                      ? "bg-white/[0.08] text-white"
+                      : "text-white/55 hover:text-white hover:bg-white/[0.04]"
+                  }`}
                 >
-                  <span className="w-5 text-center">{item.icon}</span>
-                  <span>{item.label}</span>
+                  <item.Icon
+                    className={`text-[15px] flex-shrink-0 ${
+                      active ? "text-amber-400" : "text-white/40"
+                    }`}
+                  />
+                  <span className="truncate">{item.label}</span>
                 </Link>
               );
             })}
@@ -112,9 +138,14 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
       </nav>
 
       {/* Footer */}
-      <div className="px-5 py-4 border-t border-white/10 text-[11px] text-white/50">
-        <Link href="/" className="hover:text-accent">
-          ← Back to site
+      <div className="px-4 py-3 border-t border-white/[0.06]">
+        <Link
+          href="/"
+          target="_blank"
+          className="flex items-center gap-2 text-[11px] text-white/45 hover:text-white/80 transition"
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+          <span className="font-mono">kajla.org</span>
         </Link>
       </div>
     </aside>

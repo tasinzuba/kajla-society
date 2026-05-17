@@ -63,8 +63,8 @@ export default async function EventsListPage({
               href={`/events?scope=${t.key}`}
               className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${
                 scope === t.key
-                  ? "bg-primary text-white shadow"
-                  : "text-muted hover:text-primary"
+                  ? "bg-amber-400 text-primary-dark shadow"
+                  : "text-muted hover:text-primary-dark"
               }`}
             >
               {t.label}
@@ -102,8 +102,8 @@ export default async function EventsListPage({
                 href={`/events?scope=${scope}&page=${p}`}
                 className={`min-w-[40px] h-10 grid place-items-center rounded-lg text-sm font-semibold transition ${
                   p === data.page
-                    ? "bg-primary text-white shadow-md"
-                    : "bg-white border border-border hover:border-primary"
+                    ? "bg-amber-400 text-primary-dark shadow-md"
+                    : "bg-white border border-border hover:border-amber-400"
                 }`}
               >
                 {p}
