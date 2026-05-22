@@ -204,12 +204,29 @@ model Facility {
   email         String?
   website       String?
   image         String?
+  committee     Json?            // [{ name, title, phone, photo }]
+  eventPhotos   String[]         // image URLs of the institute's events
   order         Int              @default(0)
   isActive      Boolean          @default(true)
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
 
   @@index([category, order])
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  role      String?
+  quote     String   @db.Text
+  avatar    String?
+  rating    Int      @default(5)
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive, order])
 }
 
 enum MediaType {

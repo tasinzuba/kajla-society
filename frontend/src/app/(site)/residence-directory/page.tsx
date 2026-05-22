@@ -22,7 +22,19 @@ export default function ResidenceDirectoryPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const hasFilters = Boolean(q.trim() || road.trim() || block.trim());
+  const [searched, setSearched] = useState(false);
+
   const load = useCallback(async () => {
+    // Only search when the user has entered a filter — empty by default.
+    if (!hasFilters) {
+      setItems([]);
+      setTotal(0);
+      setTotalPages(1);
+      setSearched(false);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
@@ -36,12 +48,14 @@ export default function ResidenceDirectoryPage() {
       setItems(data.items);
       setTotal(data.total);
       setTotalPages(data.totalPages);
+      setSearched(true);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load");
+      setSearched(true);
     } finally {
       setLoading(false);
     }
-  }, [page, q, block, road]);
+  }, [page, q, block, road, hasFilters]);
 
   useEffect(() => {
     const t = setTimeout(load, 300);
@@ -55,14 +69,11 @@ export default function ResidenceDirectoryPage() {
     setPage(1);
   }
 
-  const hasFilters = q || road || block;
-
   return (
     <>
       <PageHero
         title="Residence Directory"
-        titleBn="বাসিন্দা তালিকা"
-        subtitle="Search residents by name, house number, road, or block."
+        subtitle="Enter a house number or name to find a resident."
         image={stockImages.heroResidents}
         crumbs={[{ label: "Residence Directory" }]}
       />
@@ -122,19 +133,40 @@ export default function ResidenceDirectoryPage() {
           </div>
         )}
 
-        <p className="text-sm text-muted mb-5">
-          <strong className="text-foreground">{total}</strong>{" "}
-          {total === 1 ? "resident" : "residents"} found
-        </p>
+        {hasFilters && searched && (
+          <p className="text-sm text-muted mb-5">
+            <strong className="text-foreground">{total}</strong>{" "}
+            {total === 1 ? "resident" : "residents"} found
+          </p>
+        )}
 
-        {loading ? (
-          <div className="text-center py-16 text-muted">Loading...</div>
-        ) : items.length === 0 ? (
+        {!hasFilters ? (
+          /* Default empty state — prompt to search */
           <div className="bg-white border border-border rounded-2xl p-16 text-center shadow-sm">
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-accent grid place-items-center">
-              <HiOutlineHome className="text-3xl text-primary" />
+              <HiOutlineMagnifyingGlass className="text-3xl text-primary" />
             </div>
-            <p className="text-muted">No residents match your search.</p>
+            <h3 className="font-bold text-primary-dark mb-1">
+              Search the directory
+            </h3>
+            <p className="text-muted text-sm max-w-sm mx-auto">
+              Type a house number, name, road, or block above to find a
+              resident. Results will appear here.
+            </p>
+          </div>
+        ) : loading ? (
+          <div className="text-center py-16 text-muted">Searching...</div>
+        ) : items.length === 0 ? (
+          /* Not found state */
+          <div className="bg-white border border-border rounded-2xl p-16 text-center shadow-sm">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-50 grid place-items-center">
+              <HiOutlineHome className="text-3xl text-red-400" />
+            </div>
+            <h3 className="font-bold text-primary-dark mb-1">No match found</h3>
+            <p className="text-muted text-sm">
+              No resident matches your search. Please check the house number or
+              name and try again.
+            </p>
           </div>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">

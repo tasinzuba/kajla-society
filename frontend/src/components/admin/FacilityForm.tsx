@@ -11,6 +11,7 @@ import {
   type Facility,
   type FacilityInput,
   type FacilityCategory,
+  type FacilityCommitteeMember,
 } from "@/lib/facilities";
 import { getToken } from "@/lib/auth";
 import { mediaUrl } from "@/lib/media";
@@ -35,33 +36,79 @@ export function FacilityForm({ initial }: Props) {
   const [email, setEmail] = useState(initial?.email ?? "");
   const [website, setWebsite] = useState(initial?.website ?? "");
   const [image, setImage] = useState(initial?.image ?? "");
+  const [committee, setCommittee] = useState<FacilityCommitteeMember[]>(
+    initial?.committee ?? []
+  );
+  const [eventPhotos, setEventPhotos] = useState<string[]>(
+    initial?.eventPhotos ?? []
+  );
   const [order, setOrder] = useState(initial?.order ?? 0);
   const [isActive, setIsActive] = useState(initial?.isActive ?? true);
 
   const [submitting, setSubmitting] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const eventInputRef = useRef<HTMLInputElement>(null);
+
+  // Generic upload — returns the URL
+  async function uploadFile(file: File): Promise<string | null> {
+    const form = new FormData();
+    form.append("file", file);
+    const token = getToken();
+    const res = await fetch(`${API_URL}/uploads`, {
+      method: "POST",
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      body: form,
+    });
+    const body = await res.json();
+    if (!res.ok || !body.success) {
+      alert(`Upload failed: ${body.message ?? "unknown"}`);
+      return null;
+    }
+    return body.data.url as string;
+  }
 
   async function uploadImage(file: File) {
     setUploading(true);
-    try {
-      const form = new FormData();
-      form.append("file", file);
-      const token = getToken();
-      const res = await fetch(`${API_URL}/uploads`, {
-        method: "POST",
-        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-        body: form,
-      });
-      const body = await res.json();
-      if (!res.ok || !body.success) throw new Error(body.message ?? "Upload failed");
-      setImage(body.data.url);
-    } catch (e) {
-      alert(`Upload failed: ${e instanceof Error ? e.message : "unknown"}`);
-    } finally {
-      setUploading(false);
-    }
+    const url = await uploadFile(file);
+    if (url) setImage(url);
+    setUploading(false);
+  }
+
+  // Committee helpers
+  function addMember() {
+    setCommittee((c) => [...c, { name: "", title: "", phone: "", photo: "" }]);
+  }
+  function removeMember(i: number) {
+    setCommittee((c) => c.filter((_, idx) => idx !== i));
+  }
+  function updateMember(
+    i: number,
+    key: keyof FacilityCommitteeMember,
+    value: string
+  ) {
+    setCommittee((c) =>
+      c.map((m, idx) => (idx === i ? { ...m, [key]: value } : m))
+    );
+  }
+  async function uploadMemberPhoto(i: number, file: File) {
+    setBusy(`member-${i}`);
+    const url = await uploadFile(file);
+    if (url) updateMember(i, "photo", url);
+    setBusy(null);
+  }
+
+  // Event photo helpers
+  async function uploadEventPhoto(file: File) {
+    setBusy("event");
+    const url = await uploadFile(file);
+    if (url) setEventPhotos((p) => [...p, url]);
+    setBusy(null);
+  }
+  function removeEventPhoto(i: number) {
+    setEventPhotos((p) => p.filter((_, idx) => idx !== i));
   }
 
   async function onSubmit() {
@@ -76,10 +123,19 @@ export function FacilityForm({ initial }: Props) {
       description: description.trim() || null,
       address: address.trim() || null,
       phone: phone.trim() || null,
-      donationPhone: category === "RELIGIOUS" ? donationPhone.trim() || null : null,
+      donationPhone: donationPhone.trim() || null,
       email: email.trim() || null,
       website: website.trim() || null,
       image: image || null,
+      committee: committee
+        .filter((m) => m.name.trim())
+        .map((m) => ({
+          name: m.name.trim(),
+          title: m.title?.trim() || null,
+          phone: m.phone?.trim() || null,
+          photo: m.photo || null,
+        })),
+      eventPhotos,
       order,
       isActive,
     };
@@ -211,24 +267,21 @@ export function FacilityForm({ initial }: Props) {
           </div>
         </div>
 
-        {category === "RELIGIOUS" && (
-          <div className="p-4 rounded-lg bg-emerald-faint border border-emerald-pale">
-            <label className="block text-xs font-bold text-emerald-dark mb-1.5 uppercase tracking-wider">
-              Donation Phone (Bkash / Nagad / Cash)
-            </label>
-            <input
-              value={donationPhone}
-              onChange={(e) => setDonationPhone(e.target.value)}
-              placeholder="e.g. 01XXX-XXXXXX"
-              className="w-full px-4 py-2 border border-emerald-pale rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-emerald/40"
-            />
-            <p className="text-[11px] text-emerald-dark/80 mt-2">
-              This number will be shown as a prominent &ldquo;Donate&rdquo; button
-              on the public Religious Places page. Leave blank to hide the
-              button.
-            </p>
-          </div>
-        )}
+        <div className="p-4 rounded-lg bg-amber-50 border border-amber-200">
+          <label className="block text-xs font-bold text-amber-800 mb-1.5 uppercase tracking-wider">
+            Donation Phone (bKash / Nagad / Cash)
+          </label>
+          <input
+            value={donationPhone}
+            onChange={(e) => setDonationPhone(e.target.value)}
+            placeholder="e.g. 01XXX-XXXXXX"
+            className="w-full px-4 py-2 border border-amber-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-amber-400/40"
+          />
+          <p className="text-[11px] text-amber-800/80 mt-2">
+            Shown as a prominent &ldquo;Donate&rdquo; button on this
+            institution&apos;s detail page. Leave blank to hide it.
+          </p>
+        </div>
 
         <div>
           <label className="block text-xs font-semibold text-primary mb-1.5 uppercase">
@@ -319,6 +372,141 @@ export function FacilityForm({ initial }: Props) {
               </button>
             )}
           </div>
+        </div>
+
+        {/* Committee members */}
+        <div className="border-t border-border pt-5">
+          <div className="flex items-center justify-between mb-3">
+            <label className="block text-xs font-semibold text-primary uppercase tracking-wider">
+              Committee Members
+            </label>
+            <button
+              type="button"
+              onClick={addMember}
+              className="text-xs font-bold text-amber-700 hover:text-amber-800 uppercase tracking-wider"
+            >
+              + Add member
+            </button>
+          </div>
+          {committee.length === 0 ? (
+            <p className="text-sm text-muted">No committee members added.</p>
+          ) : (
+            <div className="space-y-3">
+              {committee.map((m, i) => {
+                const photo = m.photo ? mediaUrl(m.photo) : null;
+                return (
+                  <div
+                    key={i}
+                    className="flex flex-wrap items-start gap-3 p-3 rounded-lg border border-border bg-background"
+                  >
+                    {/* Photo */}
+                    <div className="flex flex-col items-center gap-1">
+                      <div className="w-14 h-14 rounded-full overflow-hidden bg-white border border-border grid place-items-center">
+                        {photo ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={photo} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="text-lg text-muted">{m.name.charAt(0) || "?"}</span>
+                        )}
+                      </div>
+                      <label className="text-[10px] text-amber-700 font-bold cursor-pointer hover:underline">
+                        {busy === `member-${i}` ? "..." : "Photo"}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            const f = e.target.files?.[0];
+                            if (f) uploadMemberPhoto(i, f);
+                            e.target.value = "";
+                          }}
+                        />
+                      </label>
+                    </div>
+                    {/* Fields */}
+                    <div className="flex-1 min-w-[200px] grid sm:grid-cols-3 gap-2">
+                      <input
+                        value={m.name}
+                        onChange={(e) => updateMember(i, "name", e.target.value)}
+                        placeholder="Name"
+                        className="px-3 py-2 border border-border rounded bg-white text-sm"
+                      />
+                      <input
+                        value={m.title ?? ""}
+                        onChange={(e) => updateMember(i, "title", e.target.value)}
+                        placeholder="Title (e.g. President)"
+                        className="px-3 py-2 border border-border rounded bg-white text-sm"
+                      />
+                      <input
+                        value={m.phone ?? ""}
+                        onChange={(e) => updateMember(i, "phone", e.target.value)}
+                        placeholder="Phone"
+                        className="px-3 py-2 border border-border rounded bg-white text-sm"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeMember(i)}
+                      className="text-xs text-danger hover:underline"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Event photos */}
+        <div className="border-t border-border pt-5">
+          <div className="flex items-center justify-between mb-3">
+            <label className="block text-xs font-semibold text-primary uppercase tracking-wider">
+              Event Photos
+            </label>
+            <button
+              type="button"
+              onClick={() => eventInputRef.current?.click()}
+              disabled={busy === "event"}
+              className="text-xs font-bold text-amber-700 hover:text-amber-800 uppercase tracking-wider disabled:opacity-50"
+            >
+              {busy === "event" ? "Uploading..." : "+ Add photo"}
+            </button>
+            <input
+              ref={eventInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) uploadEventPhoto(f);
+                e.target.value = "";
+              }}
+            />
+          </div>
+          {eventPhotos.length === 0 ? (
+            <p className="text-sm text-muted">No event photos uploaded.</p>
+          ) : (
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+              {eventPhotos.map((p, i) => (
+                <div key={i} className="relative group">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={mediaUrl(p) ?? ""}
+                    alt=""
+                    className="w-full aspect-square object-cover rounded-lg border border-border"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeEventPhoto(i)}
+                    className="absolute top-1 right-1 w-6 h-6 rounded-full bg-danger text-white text-xs grid place-items-center opacity-0 group-hover:opacity-100 transition"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

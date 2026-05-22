@@ -10,6 +10,13 @@ export type FacilityCategory =
   | "GOVERNMENT"
   | "COMMUNITY_ORG";
 
+export type FacilityCommitteeMember = {
+  name: string;
+  title?: string | null;
+  phone?: string | null;
+  photo?: string | null;
+};
+
 export type Facility = {
   id: string;
   category: FacilityCategory;
@@ -22,6 +29,8 @@ export type Facility = {
   email: string | null;
   website: string | null;
   image: string | null;
+  committee: FacilityCommitteeMember[] | null;
+  eventPhotos: string[];
   order: number;
   isActive: boolean;
   createdAt: string;
@@ -39,6 +48,8 @@ export type FacilityInput = {
   email?: string | null;
   website?: string | null;
   image?: string | null;
+  committee?: FacilityCommitteeMember[] | null;
+  eventPhotos?: string[];
   order?: number;
   isActive?: boolean;
 };
@@ -62,6 +73,10 @@ export const ALL_CATEGORIES = Object.keys(CATEGORY_META) as FacilityCategory[];
 
 export function listFacilitiesPublic(): Promise<Record<FacilityCategory, Facility[]>> {
   return api<Record<FacilityCategory, Facility[]>>("/facilities");
+}
+
+export function getFacilityPublic(id: string): Promise<Facility> {
+  return api<Facility>(`/facilities/item/${id}`);
 }
 
 // ---- Admin ----

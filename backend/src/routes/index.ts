@@ -14,6 +14,8 @@ import committeeRouter from "./committee";
 import residentsRouter from "./residents";
 import uploadsRouter from "./uploads";
 import heroSlidesRouter from "./heroSlides";
+import testimonialsRouter from "./testimonials";
+import settingsRouter from "./settings";
 
 const router = Router();
 
@@ -36,5 +38,7 @@ router.use("/committee", committeeRouter);
 router.use("/residents", residentsRouter);
 router.use("/uploads", uploadsRouter);
 router.use("/hero-slides", heroSlidesRouter);
+router.use("/testimonials", testimonialsRouter);
+router.use("/settings", settingsRouter);
 
 export default router;

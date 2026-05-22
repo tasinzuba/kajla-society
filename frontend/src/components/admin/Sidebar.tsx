@@ -17,6 +17,7 @@ import {
   HiOutlineEnvelope,
   HiOutlinePlayCircle,
   HiOutlineBuildingOffice2,
+  HiOutlineChatBubbleLeftRight,
   HiOutlineCog6Tooth,
 } from "react-icons/hi2";
 
@@ -38,6 +39,7 @@ const groups: NavGroup[] = [
   {
     heading: "Content",
     items: [
+      { label: "About Page", href: "/admin/about", Icon: HiOutlineDocumentText },
       { label: "Pages", href: "/admin/pages", Icon: HiOutlineDocumentText },
       { label: "Articles", href: "/admin/articles", Icon: HiOutlinePencilSquare },
       { label: "Events", href: "/admin/events", Icon: HiOutlineCalendarDays },
@@ -69,6 +71,7 @@ const groups: NavGroup[] = [
     items: [
       { label: "Hero Slider", href: "/admin/hero-slides", Icon: HiOutlinePlayCircle },
       { label: "Facilities", href: "/admin/facilities", Icon: HiOutlineBuildingOffice2 },
+      { label: "Testimonials", href: "/admin/testimonials", Icon: HiOutlineChatBubbleLeftRight },
       { label: "Settings", href: "/admin/settings", Icon: HiOutlineCog6Tooth },
     ],
   },

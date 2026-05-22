@@ -7,6 +7,13 @@ import { paramStr } from "../utils/params";
 
 const CATEGORY_ENUM = z.nativeEnum(FacilityCategory);
 
+const committeeMemberSchema = z.object({
+  name: z.string().max(120),
+  title: z.string().max(120).optional().nullable(),
+  phone: z.string().max(50).optional().nullable(),
+  photo: z.string().optional().nullable(),
+});
+
 export const upsertFacilitySchema = z.object({
   category: CATEGORY_ENUM,
   name: z.string().min(1).max(120),
@@ -18,6 +25,8 @@ export const upsertFacilitySchema = z.object({
   email: z.string().email().or(z.literal("")).optional().nullable(),
   website: z.string().url().or(z.literal("")).optional().nullable(),
   image: z.string().url().or(z.string().startsWith("/uploads/")).optional().nullable(),
+  committee: z.array(committeeMemberSchema).optional().nullable(),
+  eventPhotos: z.array(z.string()).optional(),
   order: z.coerce.number().int().optional(),
   isActive: z.boolean().optional(),
 });
@@ -37,6 +46,16 @@ export async function listPublic(_req: Request, res: Response): Promise<void> {
   }
 
   res.json({ success: true, data: grouped });
+}
+
+// Public — single facility by id (active only)
+export async function getPublic(req: Request, res: Response): Promise<void> {
+  const id = paramStr(req, "id");
+  const item = await prisma.facility.findFirst({
+    where: { id, isActive: true },
+  });
+  if (!item) throw ApiError.notFound();
+  res.json({ success: true, data: item });
 }
 
 // Admin — all facilities, optional category filter
@@ -74,6 +93,8 @@ export async function createFacility(req: Request, res: Response): Promise<void>
       email: input.email || null,
       website: input.website || null,
       image: input.image ?? null,
+      committee: input.committee ?? [],
+      eventPhotos: input.eventPhotos ?? [],
       order: input.order ?? 0,
       isActive: input.isActive ?? true,
     },
@@ -100,6 +121,8 @@ export async function updateFacility(req: Request, res: Response): Promise<void>
       email: input.email || null,
       website: input.website || null,
       image: input.image ?? null,
+      committee: input.committee ?? [],
+      eventPhotos: input.eventPhotos ?? [],
       order: input.order ?? existing.order,
       isActive: input.isActive ?? existing.isActive,
     },

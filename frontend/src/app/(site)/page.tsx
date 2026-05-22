@@ -7,9 +7,9 @@ import {
   HiOutlineUserGroup,
   HiOutlineHeart,
   HiOutlineShieldCheck,
-  HiOutlineGlobeAsiaAustralia,
   HiOutlineSparkles,
   HiStar,
+  HiOutlineMegaphone,
 } from "react-icons/hi2";
 import {
   FaMosque,
@@ -26,6 +26,7 @@ import { stockImages, unsplashUrl } from "@/lib/images";
 import { listHeroSlides } from "@/lib/hero-slides";
 import { listArticles, type ArticleListItem } from "@/lib/articles";
 import { listGalleriesPublic, type GallerySummary } from "@/lib/galleries";
+import { listTestimonialsPublic, type Testimonial } from "@/lib/testimonials";
 import { HeroSlider } from "@/components/site/HeroSlider";
 import { HomeGallery } from "@/components/site/HomeGallery";
 import { mediaUrl } from "@/lib/media";
@@ -34,10 +35,11 @@ import { formatDate } from "@/lib/utils";
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const [slides, articlesData, galleries] = await Promise.all([
+  const [slides, articlesData, galleries, testimonials] = await Promise.all([
     listHeroSlides().catch(() => []),
     listArticles({ limit: 4 }).catch(() => null),
     listGalleriesPublic().catch(() => [] as GallerySummary[]),
+    listTestimonialsPublic().catch(() => [] as Testimonial[]),
   ]);
   const latestNews: ArticleListItem[] = articlesData?.items ?? [];
   const photoGalleries = galleries.filter((g) => g.type === "PHOTO");
@@ -45,6 +47,38 @@ export default async function HomePage() {
 
   return (
     <>
+      {/* ===========================================================
+         ANNOUNCEMENT BANNER — continuous marquee ticker
+      =========================================================== */}
+      <section className="bg-white text-primary-dark border-y border-border">
+        <div className="marquee-wrap flex items-center gap-3 py-2.5 overflow-hidden">
+          <span className="flex-shrink-0 inline-flex items-center gap-1.5 pl-4 pr-3 text-amber-700 border-r border-border">
+            <HiOutlineMegaphone className="text-lg" />
+            <span className="text-[10px] uppercase tracking-widest font-bold hidden sm:inline">
+              Notice
+            </span>
+          </span>
+          <div className="overflow-hidden flex-1">
+            <div className="animate-marquee">
+              {[0, 1, 2, 3].map((i) => (
+                <span
+                  key={i}
+                  className="text-[13px] lg:text-sm font-medium text-primary-dark/85"
+                  aria-hidden={i !== 0}
+                >
+                  Due to organizational restructuring, all previous websites have
+                  been discontinued. Going forward, this website will serve as the
+                  official platform for monitoring, managing, and controlling all
+                  activities. Please follow this website for all future information
+                  and updates.
+                  <span className="text-amber-600 px-6">✦</span>
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ===========================================================
          HERO — Admin-controlled full-screen image slider
       =========================================================== */}
@@ -121,27 +155,30 @@ export default async function HomePage() {
               <span className="text-emerald-dark">better community</span>.
             </h2>
             <p className="text-base lg:text-lg text-foreground/75 leading-relaxed mb-7">
-              Kajla Society offers advocacy, coordination, and leadership to protect
-              property interests, improve the living environment, and enhance
-              community livability through social, cultural, and outreach activities.
+              Kajla Society works to build a safer, stronger, and more caring
+              community by protecting residents&apos; interests, promoting welfare
+              activities, supporting education and youth counselling, encouraging
+              public interaction, and raising awareness against drugs and social
+              problems. Through unity and responsible leadership, the society aims
+              to create a better living environment for every family.
             </p>
 
             <ul className="space-y-4 mb-8">
               {[
                 {
+                  Icon: HiOutlineUserGroup,
+                  title: "Community Welfare & Public Support",
+                  desc: "Building a supportive network, encouraging public interaction, and helping families with social, educational, and community concerns.",
+                },
+                {
+                  Icon: HiOutlineSparkles,
+                  title: "Youth Counselling & Progress Monitoring",
+                  desc: "Counselling, awareness programs, and education monitoring to keep residents focused on self-improvement and positive social values.",
+                },
+                {
                   Icon: HiOutlineShieldCheck,
-                  title: "Protect & Advocate",
-                  desc: "Defend property rights and resident interests with our legal team.",
-                },
-                {
-                  Icon: HiOutlineGlobeAsiaAustralia,
-                  title: "Greener Living",
-                  desc: "Beautify roads, parks, and shared spaces year-round.",
-                },
-                {
-                  Icon: HiOutlineHeart,
-                  title: "Connect & Celebrate",
-                  desc: "Host events that bring neighbors together as friends.",
+                  title: "Drug Awareness & Social Protection",
+                  desc: "Raising awareness, involving families, and working with authorities for a drug-free, safe community.",
                 },
               ].map((item) => (
                 <li
@@ -189,8 +226,10 @@ export default async function HomePage() {
                 <span className="text-emerald-dark">reach</span>
               </h2>
               <p className="text-muted text-lg leading-relaxed">
-                From mosques and schools to hospitals and markets — discover the
-                facilities that make Kajla home.
+                From religious places and educational institutions to hospitals,
+                markets, emergency services, and community support centers — Kajla
+                Society helps residents easily find essential facilities and
+                services near them.
               </p>
             </div>
             <Link
@@ -209,7 +248,7 @@ export default async function HomePage() {
                 Icon: FaMosque,
                 title: "Religious Places",
                 desc: "Mosques, prayer halls, and spiritual centers serving the community.",
-                href: "/facilities#religious",
+                href: "/facilities?category=RELIGIOUS",
                 image: unsplashUrl("1542319630-4ea90fc0d24b", 800),
                 accent: "bg-blue-500",
               },
@@ -217,7 +256,7 @@ export default async function HomePage() {
                 Icon: FaGraduationCap,
                 title: "Educational",
                 desc: "Schools, colleges, and learning institutions near you.",
-                href: "/facilities#educational",
+                href: "/facilities?category=EDUCATIONAL",
                 image: unsplashUrl("1503676260728-1c00da094a0b", 800),
                 accent: "bg-emerald-500",
               },
@@ -225,7 +264,7 @@ export default async function HomePage() {
                 Icon: FaHospital,
                 title: "Health & Emergency",
                 desc: "Hospitals, clinics, and pharmacies for round-the-clock care.",
-                href: "/facilities#health",
+                href: "/facilities?category=HEALTH_EMERGENCY",
                 image: unsplashUrl("1538108149393-fbbd81895907", 800),
                 accent: "bg-rose-500",
               },
@@ -233,7 +272,7 @@ export default async function HomePage() {
                 Icon: FaHelmetSafety,
                 title: "Construction",
                 desc: "Trusted builders, contractors, and construction services.",
-                href: "/facilities#construction",
+                href: "/facilities?category=CONSTRUCTION",
                 image: unsplashUrl("1503387762-592deb58ef4e", 800),
                 accent: "bg-amber-500",
               },
@@ -241,7 +280,7 @@ export default async function HomePage() {
                 Icon: FaCartShopping,
                 title: "Local Services",
                 desc: "Markets, shops, and everyday essentials at your doorstep.",
-                href: "/facilities#local",
+                href: "/facilities?category=LOCAL_SERVICES",
                 image: unsplashUrl("1604719312566-8912e9227c6a", 800),
                 accent: "bg-purple-500",
               },
@@ -249,7 +288,7 @@ export default async function HomePage() {
                 Icon: FaLandmark,
                 title: "Government",
                 desc: "Civic offices and public services for resident needs.",
-                href: "/facilities#government",
+                href: "/facilities?category=GOVERNMENT",
                 image: unsplashUrl("1555560037-7e0e8c7d6f1d", 800),
                 accent: "bg-cyan-500",
               },
@@ -467,14 +506,15 @@ export default async function HomePage() {
       </section>
 
       {/* ===========================================================
-         TESTIMONIALS
+         TESTIMONIALS — Admin-controlled
       =========================================================== */}
+      {testimonials.length > 0 && (
       <section className="py-24 bg-primary-dark relative">
         <div className="absolute inset-0 bg-pattern-dots opacity-10" />
 
         <div className="relative max-w-7xl mx-auto px-4">
           <div className="text-center mb-14 max-w-2xl mx-auto text-white">
-            <span className="inline-flex items-center gap-2 px-3 py-1 bg-white/15 backdrop-blur border border-white/20 text-emerald-pale rounded-full text-[10px] uppercase tracking-widest font-bold mb-4">
+            <span className="inline-flex items-center gap-2 px-3 py-1 bg-white/15 backdrop-blur border border-white/20 text-amber-300 rounded-full text-[10px] uppercase tracking-widest font-bold mb-4">
               <FaQuoteLeft />
               Community Voices
             </span>
@@ -487,60 +527,54 @@ export default async function HomePage() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            {[
-              {
-                quote:
-                  "Joining Kajla Society was the best decision for our family. The community feels like extended family.",
-                name: "Ayesha Rahman",
-                role: "Resident since 2018",
-                avatar: stockImages.avatar1,
-              },
-              {
-                quote:
-                  "The events, the safety, the green spaces — Kajla is a community in the truest sense. Our kids love it.",
-                name: "Karim Hossain",
-                role: "Block B resident",
-                avatar: stockImages.avatar2,
-              },
-              {
-                quote:
-                  "I appreciate how organized and responsive the committee is. Truly setting a standard for societies.",
-                name: "Salma Begum",
-                role: "Member since 2015",
-                avatar: stockImages.avatar3,
-              },
-            ].map((t, i) => (
-              <div
-                key={i}
-                className="bg-white/95 backdrop-blur rounded-3xl p-7 shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all relative"
-              >
-                <FaQuoteLeft className="absolute -top-3 -left-3 text-3xl text-emerald p-2 bg-white rounded-full shadow-lg" />
+            {testimonials.map((t) => {
+              const avatar = mediaUrl(t.avatar);
+              return (
+                <div
+                  key={t.id}
+                  className="bg-white/95 backdrop-blur rounded-3xl p-7 shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all relative"
+                >
+                  <FaQuoteLeft className="absolute -top-3 -left-3 text-3xl text-amber-600 p-2 bg-white rounded-full shadow-lg" />
 
-                <div className="flex items-center gap-1 mb-4 mt-2">
-                  {[1, 2, 3, 4, 5].map((s) => (
-                    <HiStar key={s} className="text-yellow-400 text-base" />
-                  ))}
-                </div>
-                <p className="text-foreground/85 leading-relaxed mb-6">
-                  &ldquo;{t.quote}&rdquo;
-                </p>
-                <div className="flex items-center gap-3 pt-5 border-t border-border">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={t.avatar}
-                    alt={t.name}
-                    className="w-12 h-12 rounded-full object-cover ring-2 ring-emerald-pale"
-                  />
-                  <div>
-                    <div className="font-bold text-primary">{t.name}</div>
-                    <div className="text-xs text-muted">{t.role}</div>
+                  <div className="flex items-center gap-1 mb-4 mt-2">
+                    {Array.from({ length: Math.max(1, Math.min(5, t.rating)) }).map(
+                      (_, s) => (
+                        <HiStar key={s} className="text-amber-400 text-base" />
+                      )
+                    )}
+                  </div>
+                  <p className="text-foreground/85 leading-relaxed mb-6">
+                    &ldquo;{t.quote}&rdquo;
+                  </p>
+                  <div className="flex items-center gap-3 pt-5 border-t border-border">
+                    <div className="w-12 h-12 rounded-full overflow-hidden ring-2 ring-amber-100 bg-accent grid place-items-center flex-shrink-0">
+                      {avatar ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={avatar}
+                          alt={t.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="font-extrabold text-primary">
+                          {t.name.charAt(0).toUpperCase()}
+                        </span>
+                      )}
+                    </div>
+                    <div>
+                      <div className="font-bold text-primary">{t.name}</div>
+                      {t.role && (
+                        <div className="text-xs text-muted">{t.role}</div>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
+      )}
 
       {/* ===========================================================
          FINAL CTA

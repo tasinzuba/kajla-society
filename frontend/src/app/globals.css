@@ -224,6 +224,25 @@ a {
   animation: fadeUp 0.4s ease-out;
 }
 
+/* Continuous marquee ticker */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.animate-marquee {
+  display: flex;
+  flex-wrap: nowrap;
+  width: max-content;
+  animation: marquee 60s linear infinite;
+}
+.animate-marquee > span {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.marquee-wrap:hover .animate-marquee {
+  animation-play-state: paused;
+}
+
 /* Solid brand utilities (no multi-color gradients) */
 .gradient-brand {
   background: var(--color-primary-dark);

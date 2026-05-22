@@ -4,6 +4,7 @@ import { requireAuth, requireEditor } from "../middleware/auth";
 import { validate } from "../middleware/validate";
 import {
   listPublic,
+  getPublic,
   listAdmin,
   getAdmin,
   createFacility,
@@ -18,6 +19,7 @@ const router = Router();
 
 // Public
 router.get("/", asyncHandler(listPublic));
+router.get("/item/:id", asyncHandler(getPublic));
 
 // Admin
 router.get("/admin", requireAuth, requireEditor, validate(adminListSchema, "query"), asyncHandler(listAdmin));
