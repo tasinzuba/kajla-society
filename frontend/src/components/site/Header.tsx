@@ -9,8 +9,22 @@ import {
   HiChevronDown,
   HiArrowRight,
   HiOutlinePhone,
+  HiOutlineMapPin,
 } from "react-icons/hi2";
 import { mainNav, type NavItem } from "@/lib/nav";
+
+const SISTER_SITES = [
+  {
+    label: process.env.NEXT_PUBLIC_SITE_2_LABEL ?? "Site 2",
+    url: process.env.NEXT_PUBLIC_SITE_2_URL ?? "http://localhost:3004",
+    hint: "Forest Green theme",
+  },
+  {
+    label: process.env.NEXT_PUBLIC_SITE_3_LABEL ?? "Site 3",
+    url: process.env.NEXT_PUBLIC_SITE_3_URL ?? "http://localhost:3003",
+    hint: "Burgundy + Rose Gold theme",
+  },
+];
 
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -55,6 +69,7 @@ export function Header() {
 
           {/* CTA + mobile toggle */}
           <div className="flex items-center gap-2 flex-shrink-0">
+            <SiteSwitcher />
             <Link
               href="/contact"
               className="hidden md:inline-flex items-center gap-2 px-5 lg:px-6 py-3 bg-amber-400 hover:bg-amber-300 text-primary-dark font-bold rounded-md shadow-lg transition-all hover:-translate-y-0.5 text-sm uppercase tracking-wide"
@@ -111,10 +126,98 @@ export function Header() {
               Contact Us
               <HiArrowRight />
             </Link>
+
+            <div className="mt-3 pt-4 border-t border-amber-500/40">
+              <div className="px-3 mb-2 text-[11px] font-bold uppercase tracking-widest text-primary-dark/70">
+                Switch Area
+              </div>
+              {SISTER_SITES.map((s) => (
+                <a
+                  key={s.url}
+                  href={s.url}
+                  onClick={() => setMobileOpen(false)}
+                  className="block px-3 py-3 text-sm font-extrabold uppercase tracking-wider text-black border-b border-amber-500/30 last:border-0"
+                >
+                  <span className="inline-flex items-center gap-2">
+                    <HiOutlineMapPin className="text-base" />
+                    {s.label}
+                  </span>
+                  <div className="text-[11px] font-normal normal-case tracking-normal text-primary-dark/70 mt-0.5">
+                    {s.hint}
+                  </div>
+                </a>
+              ))}
+            </div>
           </nav>
         </div>
       )}
     </header>
+  );
+}
+
+// ============================================================
+// Site switcher — dropdown linking to sister sites
+// ============================================================
+function SiteSwitcher() {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function onClickOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("mousedown", onClickOutside);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onClickOutside);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  return (
+    <div ref={ref} className="relative hidden md:block">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="inline-flex items-center gap-2 px-4 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-md text-sm uppercase tracking-wide transition"
+        aria-haspopup="true"
+        aria-expanded={open}
+      >
+        <HiOutlineMapPin className="text-base" />
+        <span>Switch Area</span>
+        <HiChevronDown
+          className={`text-xs transition-transform ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+
+      {open && (
+        <div
+          className="absolute top-full right-0 pt-2 z-50"
+          style={{ minWidth: "260px" }}
+        >
+          <div className="bg-white border-t-4 border-amber-400 rounded-b-md shadow-2xl overflow-hidden py-2 animate-fade-up">
+            {SISTER_SITES.map((s) => (
+              <a
+                key={s.url}
+                href={s.url}
+                className="block px-5 py-3 border-l-4 border-transparent hover:bg-amber-50 hover:border-amber-400 transition-colors"
+              >
+                <div className="text-sm font-bold uppercase tracking-wider text-primary-dark">
+                  {s.label}
+                </div>
+                <div className="text-xs text-muted mt-0.5 leading-snug normal-case tracking-normal font-normal">
+                  {s.hint}
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
