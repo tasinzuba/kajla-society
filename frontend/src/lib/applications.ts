@@ -11,6 +11,8 @@ export type ApplicationStatus = "PENDING" | "APPROVED" | "REJECTED";
 export type ChildInfo = {
   name: string;
   dateOfBirth?: string | null;
+  currentOccupation?: string | null;
+  /** Legacy field — older records may have used `school` instead of `currentOccupation`. */
   school?: string | null;
 };
 

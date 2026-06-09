@@ -239,7 +239,13 @@ export default function MembershipApplicationDetailPage({
                     compact
                   />
                 )}
-                {c.school && <DetailRow label="School" value={c.school} compact />}
+                {(c.currentOccupation || c.school) && (
+                  <DetailRow
+                    label="Current Occupation"
+                    value={c.currentOccupation || c.school || ""}
+                    compact
+                  />
+                )}
               </div>
             ))}
           </div>

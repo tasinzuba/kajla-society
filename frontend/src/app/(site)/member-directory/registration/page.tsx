@@ -39,10 +39,6 @@ export default function MembershipRegistrationPage() {
   // Membership Type & Declaration
   const [membershipType, setMembershipType] = useState("Life");
   const [agreedDeclaration, setAgreedDeclaration] = useState(false);
-  const [proposerName, setProposerName] = useState("");
-  const [proposerMembershipNo, setProposerMembershipNo] = useState("");
-  const [seconderName, setSeconderName] = useState("");
-  const [seconderMembershipNo, setSeconderMembershipNo] = useState("");
 
   // Personal
   const [fullName, setFullName] = useState("");
@@ -77,11 +73,9 @@ export default function MembershipRegistrationPage() {
   // Documents
   const [photoUrl, setPhotoUrl] = useState("");
   const [nidUrl, setNidUrl] = useState("");
-  const [taxReceiptUrl, setTaxReceiptUrl] = useState("");
 
   const photoInputRef = useRef<HTMLInputElement>(null);
   const nidInputRef = useRef<HTMLInputElement>(null);
-  const taxInputRef = useRef<HTMLInputElement>(null);
 
   // UI state
   const [submitting, setSubmitting] = useState(false);
@@ -89,7 +83,7 @@ export default function MembershipRegistrationPage() {
   const [error, setError] = useState<string | null>(null);
   const [uploadingField, setUploadingField] = useState<string | null>(null);
 
-  async function uploadFile(file: File, target: "photo" | "nid" | "tax") {
+  async function uploadFile(file: File, target: "photo" | "nid") {
     setUploadingField(target);
     try {
       const form = new FormData();
@@ -107,7 +101,6 @@ export default function MembershipRegistrationPage() {
       const url = body.data.url as string;
       if (target === "photo") setPhotoUrl(url);
       if (target === "nid") setNidUrl(url);
-      if (target === "tax") setTaxReceiptUrl(url);
     } catch (e) {
       alert(`Upload failed: ${e instanceof Error ? e.message : "unknown"}`);
     } finally {
@@ -116,7 +109,7 @@ export default function MembershipRegistrationPage() {
   }
 
   function addChild() {
-    setChildren((c) => [...c, { name: "", dateOfBirth: "", school: "" }]);
+    setChildren((c) => [...c, { name: "", dateOfBirth: "", currentOccupation: "" }]);
   }
   function removeChild(i: number) {
     setChildren((c) => c.filter((_, idx) => idx !== i));
@@ -143,10 +136,6 @@ export default function MembershipRegistrationPage() {
       const result = await submitMembership({
         membershipType,
         agreedDeclaration,
-        proposerName: proposerName.trim() || null,
-        proposerMembershipNo: proposerMembershipNo.trim() || null,
-        seconderName: seconderName.trim() || null,
-        seconderMembershipNo: seconderMembershipNo.trim() || null,
         fullName: fullName.trim(),
         fullNameBn: fullNameBn.trim() || null,
         fatherName: fatherName.trim() || null,
@@ -169,7 +158,6 @@ export default function MembershipRegistrationPage() {
         relationshipToProperty: relationshipToProperty || null,
         photoUrl: photoUrl || null,
         nidUrl: nidUrl || null,
-        taxReceiptUrl: taxReceiptUrl || null,
       });
       setDone(result.id);
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -265,48 +253,6 @@ export default function MembershipRegistrationPage() {
             </label>
           </div>
 
-          <div className="grid sm:grid-cols-2 gap-x-6 gap-y-4 mt-6">
-            <SubHeading>Proposer Information</SubHeading>
-            <SubHeading>Seconder Information</SubHeading>
-
-            <div>
-              <label className={labelCls}>Proposer Name</label>
-              <input
-                value={proposerName}
-                onChange={(e) => setProposerName(e.target.value)}
-                placeholder="Enter proposer name"
-                className={inputCls}
-              />
-            </div>
-            <div>
-              <label className={labelCls}>Seconder Name</label>
-              <input
-                value={seconderName}
-                onChange={(e) => setSeconderName(e.target.value)}
-                placeholder="Enter seconder name"
-                className={inputCls}
-              />
-            </div>
-
-            <div>
-              <label className={labelCls}>Proposer Membership Number</label>
-              <input
-                value={proposerMembershipNo}
-                onChange={(e) => setProposerMembershipNo(e.target.value)}
-                placeholder="Enter membership number"
-                className={inputCls}
-              />
-            </div>
-            <div>
-              <label className={labelCls}>Seconder Membership Number</label>
-              <input
-                value={seconderMembershipNo}
-                onChange={(e) => setSeconderMembershipNo(e.target.value)}
-                placeholder="Enter membership number"
-                className={inputCls}
-              />
-            </div>
-          </div>
         </Section>
 
         {/* ============ Section 2 — Personal Information ============ */}
@@ -507,11 +453,13 @@ export default function MembershipRegistrationPage() {
                       />
                     </div>
                     <div>
-                      <label className={labelCls}>School</label>
+                      <label className={labelCls}>Current Occupation</label>
                       <input
-                        value={c.school ?? ""}
-                        onChange={(e) => updateChild(i, "school", e.target.value)}
-                        placeholder="School name"
+                        value={c.currentOccupation ?? ""}
+                        onChange={(e) =>
+                          updateChild(i, "currentOccupation", e.target.value)
+                        }
+                        placeholder="Student / Job / etc."
                         className={inputCls}
                       />
                     </div>
@@ -608,7 +556,7 @@ export default function MembershipRegistrationPage() {
         {/* ============ Section 7 — Required Documents ============ */}
         <Section title="Required Documents" Icon={HiOutlineDocumentText}>
           <FileUploadField
-            label="Photograph PP Size (2 Copies)"
+            label="Photograph PP Size"
             required
             currentUrl={photoUrl}
             accept="image/*"
@@ -628,17 +576,6 @@ export default function MembershipRegistrationPage() {
             onUpload={(f) => uploadFile(f, "nid")}
             onClear={() => setNidUrl("")}
             inputRef={nidInputRef}
-          />
-          <FileUploadField
-            label="Photo Copy of Recent Holding Tax Receipt or Sale Deed / Share Documents Certificate"
-            required
-            currentUrl={taxReceiptUrl}
-            accept="image/*,application/pdf"
-            hint="Image or PDF. Images max 5MB; PDFs max 20MB."
-            uploading={uploadingField === "tax"}
-            onUpload={(f) => uploadFile(f, "tax")}
-            onClear={() => setTaxReceiptUrl("")}
-            inputRef={taxInputRef}
           />
         </Section>
 
@@ -687,13 +624,6 @@ function Section({
   );
 }
 
-function SubHeading({ children }: { children: React.ReactNode }) {
-  return (
-    <h4 className="text-sm font-bold text-primary-dark uppercase tracking-wider sm:col-span-1">
-      {children}
-    </h4>
-  );
-}
 
 // ============================================================
 // File upload field

@@ -58,7 +58,7 @@ async function notifyApplicant(
 const childSchema = z.object({
   name: z.string().max(120),
   dateOfBirth: z.string().optional().nullable(),
-  school: z.string().max(120).optional().nullable(),
+  currentOccupation: z.string().max(120).optional().nullable(),
 });
 
 export const membershipSchema = z.object({
